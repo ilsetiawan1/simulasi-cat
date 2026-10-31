@@ -2,7 +2,7 @@
 
 > **Metadata Proyek:**
 > - **Nama Aplikasi:** [Masukkan Nama Aplikasi / Sistem]
-> - **Dokumen Rujukan:** `PRD.md` (Product Requirements Document) & `TSD.md` (Technical Specifications Document)
+> - **Dokumen Rujukan:** `docs/PRD.md` (Product Requirements Document) & `docs/TSD.md` (Technical Specifications Document)
 > - **Pola Arsitektur:** Frontend (Feature-Driven Architecture) • Backend (Repository Pattern)
 > - **Alat Desain:** FigCraft (Canvas Control via Localhost 7979)
 
@@ -12,9 +12,9 @@
 
 Setiap kali memulai project baru atau membuka workspace ini:
 1. **Analisis Dokumen Fondasi:**  
-   Agent **WAJIB membaca dan menganalisis file `PRD.md` dan `TSD.md`** di root project sebelum mengambil tindakan apa pun.
+   Agent **WAJIB membaca dan menganalisis file `docs/PRD.md` dan `docs/TSD.md`** (atau template terkait di folder `docs/`) sebelum mengambil tindakan apa pun.
 2. **Perbarui `AGENTS.md` Ini Secara Mandiri (*Self-Update*):**  
-   Berdasarkan hasil analisis `PRD.md` dan `TSD.md`, Agent harus memperbarui placeholder dokumen ini:
+   Berdasarkan hasil analisis dokumen di folder `docs/`, Agent harus memperbarui placeholder dokumen ini:
    * Ganti `[NAMA APLIKASI]` dengan nama resmi aplikasi.
    * Daftarkan daftar fitur utama dan modul domain pada bagian arsitektur FDA.
    * Daftarkan entitas inti database pada bagian Repository Pattern.

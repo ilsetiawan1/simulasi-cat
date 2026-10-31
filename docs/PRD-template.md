@@ -42,3 +42,4 @@
 * **Kecepatan:** Waktu respon antarmuka < 100ms.
 * **Ketersediaan:** Tetap dapat mencatat transaksi dasar saat offline / jaringan terputus.
 * **Keamanan:** Otorisasi hak akses berbasis peran (RBAC).
+
