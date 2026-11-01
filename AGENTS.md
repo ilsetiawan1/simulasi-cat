@@ -3,7 +3,7 @@
 > **Metadata Proyek:**
 > - **Nama Aplikasi:** [Masukkan Nama Aplikasi / Sistem]
 > - **Dokumen Rujukan:** `docs/PRD.md` (Product Requirements Document) & `docs/TSD.md` (Technical Specifications Document)
-> - **Pola Arsitektur:** Frontend (Feature-Driven Architecture) • Backend (Repository Pattern)
+> - **Pola Arsitektur:** Frontend (Feature-Driven Architecture) • Backend (Modular Layered Repository Pattern)
 > - **Alat Desain:** FigCraft (Canvas Control via Localhost 7979)
 
 ---
@@ -83,16 +83,36 @@ src/
 * Komponen atomik yang dipakai di $\ge 3$ fitur diletakkan di `src/components/ui/`.
 * Dilarang melakukan ketergantungan melingkar (*circular dependency*) antar folder fitur.
 
-### B.2. Backend: Repository Pattern 3-Lapis
-Arsitektur backend wajib memisahkan tanggung jawab secara ketat:
+### B.2. Backend: Modular Layered Architecture dengan Repository Pattern
+Seluruh kode backend dikelompokkan berdasarkan **modul domain/fitur** di dalam folder `src/modules/<nama-modul>/` (atau `apps/api/src/modules/`). Setiap modul wajib memiliki struktur isolasi mandiri (*colocation*):
+
 ```text
-1. Controller / Handler  --> Tangani request HTTP, validasi skema input, kirim response.
-          ↓
-2. Service / Usecase     --> Menampung seluruh logika bisnis, transaksi, otorisasi.
-          ↓
-3. Repository            --> Menangani query database, ORM, dan pemetaan data mentah.
+src/
+├── config/                  # Konfigurasi database, env, server
+├── constants/               # Nilai konstan global & enum
+├── middlewares/             # Auth guard, error handler, rate limit
+├── utils/                   # Helper murni bersama lintas modul
+└── modules/
+    └── <nama-modul>/        # Contoh: article, auth, reservation, room
+        ├── __tests__/       # Unit & integration test khusus modul ini
+        ├── <modul>.routes.ts      # Definisi endpoint URL & HTTP method
+        ├── <modul>.controller.ts  # Tangani request/response HTTP & validasi payload
+        ├── <modul>.service.ts     # Logika bisnis murni, kalkulasi, transaksi database
+        ├── <modul>.repository.ts  # Query SQL, ORM, dan interaksi langsung database
+        └── <modul>.openapi.ts     # Spesifikasi OpenAPI/Swagger endpoint modul ini
 ```
-* **Larangan:** Controller **dilarang** memanggil Repository langsung. Query SQL/Database **dilarang** ada di Controller atau Service.
+
+* **Alur Eksekusi Data (Strict Layering):**
+  ```text
+  Client Request ──> Route ──> Controller ──> Service ──> Repository ──> Database
+                                                  │
+                                                  └──> Third-party / Mailer / Storage
+  ```
+* **Colocation Spesifikasi API:** Skema dokumentasi API (`<modul>.openapi.ts`) wajib diletakkan langsung di dalam modul bersangkutan agar kontrak dokumentasi selalu sinkron saat kode endpoint diperbarui.
+* **Larangan Ketat:**
+  * Controller **dilarang** memanggil Repository secara langsung (wajib melalui Service).
+  * Query SQL / pemanggilan ORM **dilarang** ditulis di Controller maupun Service (wajib diisolasi di Repository).
+  * Antar-modul dilarang mengakses Repository milik modul lain secara langsung (harus memanggil Service modul terkait jika membutuhkan data lintas domain).
 
 ### B.3. Anti-Overengineering (`ponytail`)
 Terapkan prinsip *lazy senior dev* dari skill **`ponytail`** di dalam arsitektur FDA dan Repository Pattern:
