@@ -109,9 +109,9 @@ Dokumen ini menjadi panduan eksekusi bertahap dari desain hingga rilis produksi 
 - [x] **Hasil Ujian CAT** (`src/app/result/[slug]/page.tsx`) — Ringkasan skor total & subtes, status passing grade, filter & daftar pembahasan lengkap, serta banner CTA Guest-to-Auth Handoff.
 
 ### 5C. Autentikasi & Guest-to-Auth Handoff (`feat/auth-and-handoff`)
-- [ ] **`Login`** (`src/app/login/page.tsx`) & **`Register`** (`src/app/register/page.tsx`) — Google OAuth (dengan ikon Google 4 warna), Email/Password, dan tautan lanjut sebagai Guest.
-- [ ] Hook `useGuestScoreHandoff` — Deteksi pending skor di `localStorage` usai login, submit otomatis ke `POST /api/scores`, notifikasi sukses, dan hapus data lokal agar tidak duplikat.
-- [ ] **`Riwayat`** (`src/app/history/page.tsx`) — Riwayat percobaan tryout pribadi untuk pengguna yang sudah login.
+- [x] **`Login`** (`src/app/login/page.tsx`) & **`Register`** (`src/app/register/page.tsx`) — Google OAuth (dengan ikon Google 4 warna), Email/Password, dan tautan lanjut sebagai Guest.
+- [x] Hook `useGuestScoreHandoff` — Deteksi pending skor di `localStorage` usai login, submit otomatis ke `POST /api/scores`, notifikasi sukses, dan hapus data lokal agar tidak duplikat.
+- [x] **`Riwayat`** (`src/app/history/page.tsx`) — Riwayat percobaan tryout pribadi untuk pengguna yang sudah login.
 
 **Kriteria Selesai:** Semua layar sesuai FigCraft V2 di breakpoint Mobile (`390px`), Tablet (`768px`), dan Desktop (`1440px`) tanpa horizontal overflow.
 
