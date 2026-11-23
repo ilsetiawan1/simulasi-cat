@@ -253,7 +253,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
 
   if (loading) {
     return (
-      <main className="mx-auto w-full max-w-[1280px] px-4 py-10 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <TactileCard className="p-8 text-center">
           <p className="font-mono text-base font-bold text-ink">
             Menyiapkan Hasil & Pembahasan...
@@ -265,7 +265,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
 
   if (error || !pkg) {
     return (
-      <main className="mx-auto w-full max-w-[960px] px-4 py-10 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-240 px-4 py-10 sm:px-6 lg:px-8">
         <EmptyState
           title="Hasil ujian tidak dapat dimuat"
           description={error ?? "Paket ujian tidak ditemukan."}
@@ -281,7 +281,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
 
   if (!attempt || !scoreResult) {
     return (
-      <main className="mx-auto w-full max-w-[960px] px-4 py-10 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-240 px-4 py-10 sm:px-6 lg:px-8">
         <EmptyState
           title="Belum ada hasil simulasi untuk paket ini"
           description="Selesaikan simulasi ujian terlebih dahulu untuk melihat skor total, status passing grade, dan pembahasan soal."
@@ -357,7 +357,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
   const emptyCount = reviewItems.filter((i) => i.review.selectedOptionId === null).length;
 
   return (
-    <main className="mx-auto w-full max-w-[1280px] space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mx-auto w-full max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
       {/* Banner Guest-to-Auth Handoff / Status Simpan */}
       {saveState === "guest" && (
         <TactileCard shadow="sm" className="p-5 sm:p-6">
@@ -435,7 +435,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
 
         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {/* Card Total Skor (Hijau Muda #E6F4DC) */}
-          <div className="rounded-[16px] border-[1.5px] border-accent bg-accent-soft p-4">
+          <div className="rounded-2xl border-[1.5px] border-accent bg-accent-soft p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-ink-secondary">
               Total Skor
             </p>
@@ -456,7 +456,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
           {subtestCards.map((card) => (
             <div
               key={card.key}
-              className="rounded-[16px] border-[1.5px] border-ink bg-pure p-4"
+              className="rounded-2xl border-[1.5px] border-ink bg-pure p-4"
             >
               <p className="text-xs font-medium text-ink-secondary">{card.label}</p>
               <p className="mt-2 font-mono text-3xl font-bold tabular-nums text-ink">
@@ -518,7 +518,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
                   role="tab"
                   aria-selected={active}
                   onClick={() => setReviewFilter(tab.id)}
-                  className={`min-h-[40px] rounded-[10px] border px-3.5 text-xs font-semibold transition-colors sm:text-sm ${
+                  className={`min-h-10 rounded-[10px] border px-3.5 text-xs font-semibold transition-colors sm:text-sm ${
                     active
                       ? "border-ink bg-accent-highlight text-ink"
                       : "border-border-subtle bg-pill text-ink-secondary hover:text-ink"
@@ -541,7 +541,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
                     role="tab"
                     aria-selected={active}
                     onClick={() => setSubtestFilter(sub)}
-                    className={`min-h-[36px] rounded-[10px] border px-3 text-xs font-semibold transition-colors ${
+                    className={`min-h-9 rounded-[10px] border px-3 text-xs font-semibold transition-colors ${
                       active
                         ? "border-ink bg-accent-highlight text-ink"
                         : "border-border-subtle bg-pill text-ink-secondary hover:text-ink"
@@ -558,7 +558,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
         {/* Daftar Review Soal */}
         <div className="mt-6 space-y-4">
           {filteredReviews.length === 0 ? (
-            <div className="rounded-[16px] border border-border-subtle bg-pure p-6 text-center text-sm text-ink-secondary">
+            <div className="rounded-2xl border border-border-subtle bg-pure p-6 text-center text-sm text-ink-secondary">
               Tidak ada soal yang cocok dengan filter yang dipilih.
             </div>
           ) : (
@@ -594,7 +594,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
               return (
                 <article
                   key={question.id}
-                  className="rounded-[16px] border border-border-subtle bg-pure p-4 sm:p-6"
+                  className="rounded-2xl border border-border-subtle bg-pure p-4 sm:p-6"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="font-mono text-sm font-bold text-ink">
@@ -639,7 +639,7 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
                     )}
                   </div>
 
-                  <div className="mt-4 rounded-[12px] bg-pill p-3.5 text-sm leading-relaxed text-ink-secondary">
+                  <div className="mt-4 rounded-xl bg-pill p-3.5 text-sm leading-relaxed text-ink-secondary">
                     <span className="font-semibold text-ink">Pembahasan:</span>{" "}
                     {question.explanation}
                   </div>
