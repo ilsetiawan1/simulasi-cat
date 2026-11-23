@@ -9,7 +9,7 @@ Dokumen ini menjadi panduan eksekusi bertahap dari desain hingga rilis produksi 
 | Fase | Nama Fase | Target Branch Git | Status |
 | :---: | :--- | :--- | :---: |
 | **1** | Fondasi Dokumen & Desain UI/UX (FigCraft) | `docs/init-prd-tsd-design` | **Selesai** |
-| **2** | Setup Arsitektur Folder & Dependency Teknologi | `feat/project-setup` | Belum Dimulai |
+| **2** | Setup Arsitektur Folder & Dependency Teknologi | `feat/project-setup` | **Selesai** |
 | **3** | Instalasi & Integrasi Database (Supabase) | `feat/supabase-schema-seed` | Belum Dimulai |
 | **4** | Backend (Core Engine & Repository Pattern) | `feat/backend-modules` | Belum Dimulai |
 | **5** | Frontend (Feature-Driven Architecture) | `feat/frontend-ui` *(dapat dipecah per fitur)* | Belum Dimulai |
@@ -37,14 +37,14 @@ Dokumen ini menjadi panduan eksekusi bertahap dari desain hingga rilis produksi 
 **Target Branch:** `feat/project-setup`
 
 **Deliverables:**
-- [ ] Inisialisasi proyek **Next.js (App Router)** + **TypeScript (`strict: true`)** + **Tailwind CSS** menggunakan **Bun**.
-- [ ] Instalasi dependency inti: `zod`, `@supabase/supabase-js`, `@supabase/ssr`, dan `@playwright/test` (unit & API integration test menggunakan **`bun test`** bawaan Bun).
-- [ ] Pembuatan struktur folder sesuai `docs/TSD.md`:
+- [x] Inisialisasi proyek **Next.js (App Router)** + **TypeScript (`strict: true`)** + **Tailwind CSS** menggunakan **Bun**.
+- [x] Instalasi dependency inti: `zod`, `@supabase/supabase-js`, `@supabase/ssr`, dan `@playwright/test` (unit & API integration test menggunakan **`bun test`** bawaan Bun).
+- [x] Pembuatan struktur folder sesuai `docs/TSD.md`:
   * Frontend FDA: `src/features/{exam-catalog,cat-exam,exam-result,leaderboard,auth}/` dan `src/components/ui/`
   * Backend Modular: `src/modules/{packages,questions,scores,profiles}/`
   * Shared & Config: `src/config/`, `src/constants/`, `src/middlewares/`, `src/utils/`, `src/lib/{supabase,exam-engine,storage}/`
-- [ ] Setup font (`Plus Jakarta Sans`, `JetBrains Mono`, `Inter`) via `next/font/google` dan design tokens warna/radius/shadow di `globals.css` sesuai `docs/DESIGN.md`.
-- [ ] Setup file `.env.example` dan validasi environment variable dengan Zod (`src/config/env.ts`).
+- [x] Setup font (`Plus Jakarta Sans`, `JetBrains Mono`, `Inter`) via `next/font/google` dan design tokens warna/radius/shadow di `globals.css` sesuai `docs/DESIGN.md`.
+- [x] Setup file `.env.example` dan validasi environment variable dengan Zod (`src/config/env.ts`).
 
 **Kriteria Selesai:** `bun run dev`, `bun run build`, dan `bun test` berjalan tanpa error.
 
