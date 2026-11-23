@@ -10,7 +10,7 @@ Dokumen ini menjadi panduan eksekusi bertahap dari desain hingga rilis produksi 
 | :---: | :--- | :--- | :---: |
 | **1** | Fondasi Dokumen & Desain UI/UX (FigCraft) | `docs/init-prd-tsd-design` | **Selesai** |
 | **2** | Setup Arsitektur Folder & Dependency Teknologi | `feat/project-setup` | **Selesai** |
-| **3** | Instalasi & Integrasi Database (Supabase) | `feat/supabase-schema-seed` | Belum Dimulai |
+| **3** | Instalasi & Integrasi Database (Supabase) | `feat/supabase-schema-seed` | **Selesai** |
 | **4** | Backend (Core Engine & Repository Pattern) | `feat/backend-modules` | Belum Dimulai |
 | **5** | Frontend (Feature-Driven Architecture) | `feat/frontend-ui` *(dapat dipecah per fitur)* | Belum Dimulai |
 | **6** | Final Testing & Security QA | `test/qa-and-security` | Belum Dimulai |
@@ -55,14 +55,14 @@ Dokumen ini menjadi panduan eksekusi bertahap dari desain hingga rilis produksi 
 **Target Branch:** `feat/supabase-schema-seed`
 
 **Deliverables:**
-- [ ] Setup proyek Supabase di region **`ap-southeast-1` (Singapore)** dan hubungkan `NEXT_PUBLIC_SUPABASE_URL` & `NEXT_PUBLIC_SUPABASE_ANON_KEY` ke `.env.local`.
-- [ ] Buat file migrasi SQL `supabase/migrations/001_init_schema.sql`:
+- [x] Setup proyek Supabase di region **`ap-southeast-1` (Singapore)** dan hubungkan `NEXT_PUBLIC_SUPABASE_URL` & `NEXT_PUBLIC_SUPABASE_ANON_KEY` ke `.env.local`.
+- [x] Buat file migrasi SQL `supabase/migrations/001_init_schema.sql`:
   * Tabel `profiles`, `exam_packages`, `questions` (dengan `options JSONB` tanpa huruf A-E statis & `shuffle_options`), dan `scores` (dengan `unique (user_id, client_attempt_id)`).
   * Indeks kinerja: `idx_questions_package_subtest`, `idx_scores_leaderboard_rank` (tie-breaker BKN), dan `idx_scores_user_history`.
   * Trigger `handle_new_user()` untuk membuat profil otomatis saat user registrasi.
   * Seluruh kebijakan **Row Level Security (RLS)** untuk `anon` dan `authenticated`.
-- [ ] Buat file `supabase/seed.sql` berisi paket aktif (SKD Penuh, Mini Tryout TWK/TIU/TKP, SKB) beserta sampel soal realistis (termasuk minimal 1 soal dengan `shuffle_options = false`).
-- [ ] Implementasi `src/lib/supabase/client.ts` (browser) & `src/lib/supabase/server.ts` (cookie-aware server client) serta route handler `src/app/auth/callback/route.ts`.
+- [x] Buat file `supabase/seed.sql` berisi paket aktif (SKD Penuh, Mini Tryout TWK/TIU/TKP, SKB) beserta sampel soal realistis (termasuk minimal 1 soal dengan `shuffle_options = false`).
+- [x] Implementasi `src/lib/supabase/client.ts` (browser) & `src/lib/supabase/server.ts` (cookie-aware server client) serta route handler `src/app/auth/callback/route.ts`.
 - [ ] Konfigurasi provider **Email** dan **Google OAuth** di Supabase Auth Dashboard.
 
 **Kriteria Selesai:** Semua tabel, indeks, trigger, RLS, dan data seed aktif di Supabase serta koneksi baca dari Next.js terverifikasi.
