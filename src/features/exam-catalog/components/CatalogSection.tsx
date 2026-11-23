@@ -1,10 +1,15 @@
 "use client";
 
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, EmptyState, TactileCard, buttonClasses } from "@/components/ui";
 import type { ExamCategory, ExamPackageRow } from "@/lib/supabase/types";
 import { fetchActivePackages } from "../api/packages.api";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 type FilterOption = "ALL" | "SKD_FULL" | "MINI" | "SKB";
 
@@ -30,6 +35,8 @@ function matchesFilter(pkg: ExamPackageRow, filter: FilterOption): boolean {
 }
 
 export function CatalogSection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const gridRef = useRef<HTMLDivElement | null>(null);
   const [packages, setPackages] = useState<ExamPackageRow[]>([]);
   const [filter, setFilter] = useState<FilterOption>("ALL");
   const [loading, setLoading] = useState(true);
@@ -54,12 +61,82 @@ export function CatalogSection() {
 
   const visiblePackages = packages.filter((pkg) => matchesFilter(pkg, filter));
 
+  // Scroll reveal untuk header & tab filter Katalog Tryout
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 86%",
+            once: true,
+          },
+        });
+
+        tl.from("[data-catalog-head]", {
+          y: 18,
+          opacity: 0,
+          duration: 0.45,
+          ease: "power2.out",
+          clearProps: "transform",
+        }).from(
+          "[data-catalog-tabs]",
+          {
+            y: 14,
+            opacity: 0,
+            duration: 0.4,
+            ease: "power2.out",
+            clearProps: "transform",
+          },
+          "-=0.25",
+        );
+      });
+
+      return () => mm.revert();
+    },
+    { scope: sectionRef },
+  );
+
+  // Stagger reveal untuk kartu paket saat selesai dimuat atau saat ganti filter
+  useGSAP(
+    () => {
+      if (loading || error || visiblePackages.length === 0 || !gridRef.current) return;
+
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from("[data-catalog-card]", {
+          y: 22,
+          opacity: 0,
+          duration: 0.45,
+          stagger: 0.08,
+          ease: "power2.out",
+          clearProps: "transform",
+          scrollTrigger: {
+            trigger: gridRef.current,
+            start: "top 88%",
+            once: true,
+          },
+        });
+      });
+
+      // Refresh ScrollTrigger agar section Cara Kerja di bawahnya membaca tinggi terbaru
+      ScrollTrigger.refresh();
+      return () => mm.revert();
+    },
+    { scope: gridRef, dependencies: [loading, filter, visiblePackages.length], revertOnUpdate: true },
+  );
+
   return (
     <section
+      ref={sectionRef}
       id="katalog"
       className="mx-auto max-w-[1280px] scroll-mt-10 px-4 py-14 sm:px-8 lg:px-12 lg:py-20"
     >
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+      <div
+        data-catalog-head
+        className="flex flex-col justify-between gap-4 md:flex-row md:items-end"
+      >
         <div>
           <p className="text-xs font-semibold tracking-[0.08em] text-accent uppercase">
             KATALOG TRYOUT
@@ -75,7 +152,7 @@ export function CatalogSection() {
       </div>
 
       {/* Category Filter Tabs */}
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div data-catalog-tabs className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((item) => {
           const active = filter === item.value;
           return (
@@ -142,15 +219,18 @@ export function CatalogSection() {
 
       {/* Package Grid: 1-col Mobile -> 2-col Tablet -> 3-col Desktop */}
       {!loading && !error && visiblePackages.length > 0 && (
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div
+          ref={gridRef}
+          className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+        >
           {visiblePackages.map((pkg) => {
             const isFeatured = pkg.category === "SKD_FULL";
             return (
-              <TactileCard
-                key={pkg.id}
-                borderStrong={isFeatured}
-                className="flex flex-col overflow-hidden"
-              >
+              <div key={pkg.id} data-catalog-card className="flex">
+                <TactileCard
+                  borderStrong={isFeatured}
+                  className="flex w-full flex-col overflow-hidden"
+                >
                 {isFeatured && (
                   <div className="border-b border-ink/20 bg-accent-highlight px-6 py-2.5 font-mono text-xs font-bold text-ink">
                     {getCategoryLabel(pkg.category)}
@@ -214,7 +294,8 @@ export function CatalogSection() {
                     </Link>
                   </div>
                 </div>
-              </TactileCard>
+                </TactileCard>
+              </div>
             );
           })}
         </div>
