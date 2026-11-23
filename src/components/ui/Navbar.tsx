@@ -175,9 +175,17 @@ export function Navbar() {
         <div className="mx-auto flex h-[72px] max-w-[1280px] items-center justify-between gap-3 px-4 sm:px-8 lg:h-[84px] lg:px-12">
           <Link
             href="/"
-            className="font-display text-2xl font-bold tracking-[-0.04em] text-ink"
+            className="inline-flex items-center gap-2.5 font-display text-2xl font-bold tracking-[-0.04em] text-ink"
           >
-            simcat
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.png"
+              alt=""
+              width={48}
+              height={48}
+              className="h-10 w-10 shrink-0 object-contain sm:h-11 sm:w-11 lg:h-12 lg:w-12"
+            />
+            <span>simcat</span>
           </Link>
 
           <nav aria-label="Navigasi utama" className="hidden items-center gap-8 md:flex">
@@ -297,9 +305,9 @@ export function Navbar() {
       {!isExamRoute && (
         <nav
           aria-label="Navigasi bawah mobile"
-          className="fixed inset-x-0 bottom-0 z-40 border-t-[1.5px] border-ink bg-card/95 backdrop-blur-sm md:hidden"
+          className="fixed inset-x-0 bottom-0 z-40 border-t-[1.5px] border-ink bg-card/95 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur-sm md:hidden"
         >
-          <div className="mx-auto grid max-w-md grid-cols-5 px-1.5 py-1.5">
+          <div className="mx-auto grid max-w-md grid-cols-5 px-1.5 pt-2 pb-1">
             {mobileTabs.map((tab) => {
               const isActive =
                 tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);

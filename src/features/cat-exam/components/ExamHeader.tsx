@@ -33,8 +33,16 @@ export function ExamHeader({
       <div className="mx-auto flex w-full max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
         {/* Brand & Info Paket */}
         <div className="flex min-w-0 items-center gap-3">
-          <span className="font-display text-lg font-extrabold tracking-tight text-ink">
-            simcat
+          <span className="inline-flex shrink-0 items-center gap-1.5 font-display text-lg font-extrabold tracking-tight text-ink">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.png"
+              alt=""
+              width={26}
+              height={26}
+              className="h-[26px] w-[26px] shrink-0 object-contain"
+            />
+            <span>simcat</span>
           </span>
           <span className="hidden h-5 w-px bg-border-subtle sm:inline-block" aria-hidden="true" />
           <div className="min-w-0">
