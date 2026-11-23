@@ -97,11 +97,11 @@ Dokumen ini menjadi panduan eksekusi bertahap dari desain hingga rilis produksi 
 **Target Branch:** `feat/frontend-ui` *(disarankan dipecah menjadi 3 sub-branch agar review tetap fokus)*
 
 ### 5A. Komponen UI Dasar & Halaman Publik (`feat/ui-public-pages`)
-- [ ] Komponen bersama di `src/components/ui/` (`Button`, `TactileCard`, `Modal`, `Drawer`, `EmptyState`).
-- [ ] **`Home`** (`src/app/page.tsx`) — Single page sesuai FigCraft V2: Navbar (`simcat`, `Home | Papan Peringkat | Aturan BKN`, `Masuk`), Hero + selection highlight hijau + 3 kartu miring + aset line-art SVG, Section Katalog, Section Cara Kerja (4 langkah), dan Footer.
-- [ ] **`Papan Peringkat`** (`src/app/leaderboard/page.tsx`) — Pemilih paket, tabel peringkat Desktop/Tablet, kartu peringkat Mobile, serta empty/loading/error state.
-- [ ] **`Aturan BKN`** (`src/app/aturan-bkn/page.tsx`) — Tabel KepmenPANRB 321/2024, kartu tie-breaker, pengacakan & SKB, dan CTA mulai simulasi.
-- [ ] **`Error Page (404)`** (`src/app/not-found.tsx`) — Halaman 404 sesuai FigCraft V2.
+- [x] Komponen bersama di `src/components/ui/` (`Button`, `TactileCard`, `Modal`, `Drawer`, `EmptyState`).
+- [x] **`Home`** (`src/app/page.tsx`) — Single page sesuai FigCraft V2: Navbar (`simcat`, `Home | Papan Peringkat | Aturan BKN`, `Masuk`), Hero + selection highlight hijau + 3 kartu miring + aset line-art SVG, Section Katalog, Section Cara Kerja (4 langkah), dan Footer.
+- [x] **`Papan Peringkat`** (`src/app/leaderboard/page.tsx`) — Pemilih paket, tabel peringkat Desktop/Tablet, kartu peringkat Mobile, serta empty/loading/error state.
+- [x] **`Aturan BKN`** (`src/app/aturan-bkn/page.tsx`) — Tabel KepmenPANRB 321/2024, kartu tie-breaker, pengacakan & SKB, dan CTA mulai simulasi.
+- [x] **`Error Page (404)`** (`src/app/not-found.tsx`) — Halaman 404 sesuai FigCraft V2.
 
 ### 5B. Alur Ujian CAT & Evaluasi (`feat/cat-exam-ui`)
 - [ ] **Konfirmasi Ujian** (`src/app/packages/[slug]/page.tsx`) — Ringkasan aturan paket, passing grade, tombol Mulai Ujian / Lanjutkan Sesi.
