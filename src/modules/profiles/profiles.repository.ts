@@ -3,6 +3,11 @@ import type { ProfileRow } from "@/lib/supabase/types";
 
 const PROFILE_COLUMNS = "id, display_name, avatar_url, created_at, updated_at";
 
+export interface UpdateProfileRowInput {
+  display_name?: string;
+  avatar_url?: string | null;
+}
+
 export async function findProfileById(
   supabase: SupabaseClient,
   userId: string,
@@ -20,15 +25,15 @@ export async function findProfileById(
   return (data as ProfileRow | null) ?? null;
 }
 
-export async function updateProfileDisplayName(
+export async function updateProfileRow(
   supabase: SupabaseClient,
   userId: string,
-  displayName: string,
+  changes: UpdateProfileRowInput,
 ): Promise<ProfileRow> {
   const { data, error } = await supabase
     .from("profiles")
     .update({
-      display_name: displayName,
+      ...changes,
       updated_at: new Date().toISOString(),
     })
     .eq("id", userId)

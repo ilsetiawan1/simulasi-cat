@@ -11,6 +11,8 @@ const sql = new SQL(databaseUrl);
 try {
   console.log("Menjalankan migrasi: supabase/migrations/001_init_schema.sql ...");
   await sql.file("supabase/migrations/001_init_schema.sql");
+  console.log("Menjalankan migrasi: supabase/migrations/002_avatars_storage.sql ...");
+  await sql.file("supabase/migrations/002_avatars_storage.sql");
   console.log("Migrasi selesai.");
 
   console.log("Menjalankan seed: supabase/seed.sql ...");

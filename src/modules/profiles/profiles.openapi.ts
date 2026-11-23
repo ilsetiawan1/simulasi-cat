@@ -10,7 +10,7 @@ export const profilesOpenApi = {
       },
     },
     patch: {
-      summary: "Perbarui nama tampilan (display_name) profil sendiri",
+      summary: "Perbarui nama tampilan (display_name) dan/atau avatar (avatar_url) profil sendiri",
       tags: ["Profiles"],
       security: [{ supabaseAuthCookie: [] }],
       requestBody: {
@@ -19,9 +19,9 @@ export const profilesOpenApi = {
           "application/json": {
             schema: {
               type: "object",
-              required: ["displayName"],
               properties: {
                 displayName: { type: "string", minLength: 2, maxLength: 60 },
+                avatarUrl: { type: "string", nullable: true, maxLength: 512 },
               },
             },
           },
@@ -29,7 +29,7 @@ export const profilesOpenApi = {
       },
       responses: {
         200: { description: "Profil berhasil diperbarui." },
-        400: { description: "Nama tampilan tidak valid." },
+        400: { description: "Payload profil tidak valid." },
         401: { description: "Pengguna belum login." },
       },
     },

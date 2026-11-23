@@ -18,6 +18,45 @@ function formatRank(rank: number): string {
   return rank < 10 ? `#0${rank}` : `#${rank}`;
 }
 
+function getInitials(name: string): string {
+  const parts = name
+    .trim()
+    .split(" ")
+    .filter((part) => part.length > 0);
+  if (parts.length === 0) return "PS";
+  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase();
+  return `${parts[0]![0] ?? ""}${parts[1]![0] ?? ""}`.toUpperCase();
+}
+
+function ParticipantAvatar({
+  name,
+  avatarUrl,
+}: {
+  name: string;
+  avatarUrl: string | null;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  return (
+    <span className="inline-flex h-8 w-8 shrink-0 overflow-hidden rounded-full border-[1.5px] border-border-subtle bg-accent-soft">
+      {avatarUrl && !failed ? (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={avatarUrl}
+          alt={name}
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <span className="flex h-full w-full items-center justify-center font-mono text-xs font-bold text-accent-dark">
+          {getInitials(name)}
+        </span>
+      )}
+    </span>
+  );
+}
+
 export function LeaderboardView() {
   const [packages, setPackages] = useState<ExamPackageRow[]>([]);
   const [selectedPackageId, setSelectedPackageId] = useState<string>("");
@@ -176,18 +215,24 @@ export function LeaderboardView() {
                   className={`p-4 ${isTop ? "bg-accent-soft" : ""}`}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-ink">
-                        <span className="mr-2 font-mono font-bold text-accent-dark">
-                          {formatRank(entry.rank)}
-                        </span>
-                        {entry.displayName}
-                      </p>
-                      <p className="mt-1.5 font-mono text-xs tabular-nums text-ink-secondary">
-                        {isSkb
-                          ? `SKB ${entry.scoreSkb}`
-                          : `TWK ${entry.scoreTwk} • TIU ${entry.scoreTiu} • TKP ${entry.scoreTkp}`}
-                      </p>
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      <ParticipantAvatar
+                        name={entry.displayName}
+                        avatarUrl={entry.avatarUrl}
+                      />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-ink">
+                          <span className="mr-1.5 font-mono font-bold text-accent-dark">
+                            {formatRank(entry.rank)}
+                          </span>
+                          {entry.displayName}
+                        </p>
+                        <p className="mt-0.5 font-mono text-xs tabular-nums text-ink-secondary">
+                          {isSkb
+                            ? `SKB ${entry.scoreSkb}`
+                            : `TWK ${entry.scoreTwk} • TIU ${entry.scoreTiu} • TKP ${entry.scoreTkp}`}
+                        </p>
+                      </div>
                     </div>
                     <p className="font-mono text-xl font-bold tabular-nums text-ink">
                       {entry.totalScore}
@@ -234,7 +279,13 @@ export function LeaderboardView() {
                           {formatRank(entry.rank)}
                         </td>
                         <td className="px-4 py-4 font-medium text-ink">
-                          {entry.displayName}
+                          <div className="flex items-center gap-3">
+                            <ParticipantAvatar
+                              name={entry.displayName}
+                              avatarUrl={entry.avatarUrl}
+                            />
+                            <span className="truncate">{entry.displayName}</span>
+                          </div>
                         </td>
                         {!isSkb && (
                           <td className="px-4 py-4 text-right font-mono tabular-nums text-ink">
