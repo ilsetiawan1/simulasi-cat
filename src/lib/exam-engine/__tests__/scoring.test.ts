@@ -94,4 +94,71 @@ describe("calculateExamScore", () => {
     expect(res.isPassed).toBe(true);
     expect(res.answeredCount).toBe(1);
   });
+
+  test("SKD_FULL gagal bila salah satu subtes (TIU atau TKP) kurang 1 poin dari passing grade", () => {
+    const pkg = {
+      category: "SKD_FULL" as const,
+      passing_grade_twk: 65,
+      passing_grade_tiu: 80,
+      passing_grade_tkp: 166,
+    };
+
+    const questions: QuestionRow[] = [
+      ...Array.from({ length: 13 }, (_, i) => makeQ(`twk-${i}`, "TWK", 5)),
+      ...Array.from({ length: 16 }, (_, i) => makeQ(`tiu-${i}`, "TIU", 5)),
+      ...Array.from({ length: 33 }, (_, i) => makeQ(`tkp-${i}`, "TKP", 5)),
+      makeQ("tkp-last", "TKP", 5),
+    ];
+
+    // TKP = 165 (kurang 1 poin karena tkp-last dikosongkan)
+    const answersMissingTkp: Record<string, string> = {};
+    for (const q of questions) {
+      if (q.id !== "tkp-last") {
+        answersMissingTkp[q.id] = "opt_best";
+      }
+    }
+
+    const tkpFail = calculateExamScore(pkg, questions, answersMissingTkp);
+    expect(tkpFail.scoreTwk).toBe(65);
+    expect(tkpFail.scoreTiu).toBe(80);
+    expect(tkpFail.scoreTkp).toBe(165);
+    expect(tkpFail.subtestPassed).toEqual({ twk: true, tiu: true, tkp: false });
+    expect(tkpFail.isPassed).toBe(false);
+
+    // TIU = 75 (< 80) dan opsi palsu tidak dikenal diabaikan
+    const answersBadTiu: Record<string, string> = { ...answersMissingTkp };
+    answersBadTiu["tkp-last"] = "opt_low";
+    answersBadTiu["tiu-0"] = "opt_tidak_ada";
+    const tiuFail = calculateExamScore(pkg, questions, answersBadTiu);
+    expect(tiuFail.scoreTiu).toBe(75);
+    expect(tiuFail.subtestPassed.tiu).toBe(false);
+    expect(tiuFail.isPassed).toBe(false);
+  });
+
+  test("MINI_TIU dan MINI_TKP hanya mengevaluasi passing grade subtes terkait", () => {
+    const tiuPkg = {
+      category: "MINI_TIU" as const,
+      passing_grade_twk: null,
+      passing_grade_tiu: 80,
+      passing_grade_tkp: null,
+    };
+    const tiuQuestions = Array.from({ length: 16 }, (_, i) => makeQ(`tiu-${i}`, "TIU", 5));
+    const tiuAnswers = Object.fromEntries(tiuQuestions.map((q) => [q.id, "opt_best"]));
+    const tiuRes = calculateExamScore(tiuPkg, tiuQuestions, tiuAnswers);
+    expect(tiuRes.isPassed).toBe(true);
+    expect(tiuRes.subtestPassed).toEqual({ twk: null, tiu: true, tkp: null });
+
+    const tkpPkg = {
+      category: "MINI_TKP" as const,
+      passing_grade_twk: null,
+      passing_grade_tiu: null,
+      passing_grade_tkp: 166,
+    };
+    const tkpQuestions = Array.from({ length: 34 }, (_, i) => makeQ(`tkp-${i}`, "TKP", 5));
+    const tkpAnswers = Object.fromEntries(tkpQuestions.map((q) => [q.id, "opt_best"]));
+    const tkpRes = calculateExamScore(tkpPkg, tkpQuestions, tkpAnswers);
+    expect(tkpRes.scoreTkp).toBe(170);
+    expect(tkpRes.isPassed).toBe(true);
+    expect(tkpRes.subtestPassed).toEqual({ twk: null, tiu: null, tkp: true });
+  });
 });
