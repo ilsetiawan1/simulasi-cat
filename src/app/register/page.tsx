@@ -3,9 +3,10 @@ import { Suspense } from "react";
 import { AuthForm } from "@/features/auth";
 
 export const metadata: Metadata = {
-  title: "Buat Akun | simcat",
+  title: "Buat Akun",
   description:
     "Daftar gratis di simcat untuk menyimpan riwayat tryout CPNS dan masuk Papan Peringkat.",
+  robots: { index: false, follow: false },
 };
 
 export default function RegisterPage() {

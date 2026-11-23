@@ -3,9 +3,10 @@ import { Footer, Navbar } from "@/components/ui";
 import { ExamResultView } from "@/features/exam-result";
 
 export const metadata: Metadata = {
-  title: "Hasil Ujian CAT & Pembahasan | simcat",
+  title: "Hasil Ujian CAT & Pembahasan",
   description:
     "Ringkasan skor total, status passing grade, dan pembahasan lengkap simulasi CAT CPNS.",
+  robots: { index: false, follow: false },
 };
 
 interface ResultPageProps {

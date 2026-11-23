@@ -80,9 +80,12 @@ Desain `simulasi-cat` mengadopsi gaya **Warm Paper Editorial** yang taktil, rama
 * **Tactile Card Shadow (Ciri Khas Referensi):**
   * Border `1.5px solid #181816`, radius `20px`–`24px`, dan *hard offset shadow* solid `#181816` (`offset: [0, 6]`, `blur: 0`).
   * Khusus 3 kartu sorotan di Hero Section, kartu kiri & kanan diberi rotasi halus (`-2.5°` dan `+2.5°`) sementara kartu tengah lurus (`0°`) dan sedikit lebih depan.
-* **Navigasi Atas:**
+* **Navigasi Atas (Desktop/Tablet) & Bottom Nav (Mobile):**
   * Kiri: Wordmark `simcat` (tebal geometris).
-  * Tengah: `Home` | `Papan Peringkat` | `Aturan BKN`.
-  * Kanan: Tombol pill outline `Masuk` (`border: 1.5px solid #181816`, `radius: 9999px`).
+  * Tengah: `Home` | `Papan Peringkat` | `Aturan BKN` (+ `Riwayat` saat login).
+  * Kanan: Tombol pill outline `Masuk` saat Guest, atau tautan `[Avatar bulat 32px] Nama Depan` menuju `/profile` beserta tombol `Keluar` saat sudah login.
+  * **Mobile Bottom Navigation:** 5 tab tetap di bagian bawah (`Home`, `Peringkat`, `Aturan`, `Riwayat`, `Profil`/`Masuk`) dengan pill hijau lembut `#E6F4DC` pada tab aktif, dan otomatis tersembunyi di ruang ujian (`/exam/*`).
+* **Avatar & Profil Akun (`/profile`):**
+  * Menampilkan foto profil Google secara otomatis, opsi unggah foto ke Supabase Storage (`avatars`), serta 5 preset avatar karakter pastel statis (`public/avatars/preset-1.svg`–`preset-5.svg`). Avatar peserta juga ditampilkan di baris Papan Peringkat.
 * **Target Sentuh & Reflow Mobile (`antislop-layoutmobile`):**
   * Semua tombol dan kartu aksi di mobile minimal tinggi `44px`, kartu Hero miring otomatis melurus (`0°`) dan menumpuk 1 kolom rapi di layar ponsel (`390px`), tanpa *horizontal overflow*.

@@ -26,6 +26,12 @@ build/
 next-env.d.ts
 *.tsbuildinfo
 
+# Internal / Local-Only Planning & Design Assets
+AGENTS.md
+docs/ROADMAP.md
+docs/simulasi-cat.figcraft
+e2e/
+
 # Testing
 playwright-report/
 test-results/
