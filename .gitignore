@@ -23,6 +23,7 @@ dist/
 build/
 .cache/
 next-env.d.ts
+*.tsbuildinfo
 
 # Testing
 playwright-report/

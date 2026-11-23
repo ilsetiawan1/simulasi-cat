@@ -128,6 +128,9 @@ src/
   * Controller **dilarang** memanggil Repository secara langsung (wajib melalui Service).
   * Query Supabase / SQL **dilarang** ditulis di Controller maupun Service (wajib diisolasi di Repository).
   * Antar-modul dilarang mengakses Repository milik modul lain secara langsung (harus memanggil Service modul terkait).
+* **Integrasi Skills Backend & Database:**
+  * **`supabase`**: Wajib dijadikan acuan saat mengimplementasikan Supabase SSR Auth (`@supabase/ssr`), RLS policies, manajemen sesi cookie, dan interaksi client/server Supabase.
+  * **`supabase-postgres-best-practices`**: Wajib dijadikan acuan saat menulis migrasi SQL, desain indeks komposit (termasuk tie-breaker leaderboard), query JSONB (`questions.options`), serta optimasi performa PostgreSQL di dalam `<modul>.repository.ts`.
 
 ### B.3. Anti-Overengineering (`ponytail`)
 Terapkan prinsip *lazy senior dev* dari skill **`ponytail`** di dalam arsitektur FDA dan Repository Pattern:
