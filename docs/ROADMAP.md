@@ -104,9 +104,9 @@ Dokumen ini menjadi panduan eksekusi bertahap dari desain hingga rilis produksi 
 - [x] **`Error Page (404)`** (`src/app/not-found.tsx`) — Halaman 404 sesuai FigCraft V2.
 
 ### 5B. Alur Ujian CAT & Evaluasi (`feat/cat-exam-ui`)
-- [ ] **Konfirmasi Ujian** (`src/app/packages/[slug]/page.tsx`) — Ringkasan aturan paket, passing grade, tombol Mulai Ujian / Lanjutkan Sesi.
-- [ ] **Ruang Ujian CAT** (`src/app/exam/[slug]/page.tsx`) — 1x fetch soal, Fisher-Yates shuffle, snapshot `localStorage` anti-refresh, timer mundur berbasis `endTimestamp` + auto-submit, panel matriks kanan (Desktop), drawer `Daftar Soal` (Mobile & Tablet), modal konfirmasi selesai ujian, dan navigasi keyboard.
-- [ ] **Hasil Ujian CAT** (`src/app/result/[slug]/page.tsx`) — Ringkasan skor total & subtes, status passing grade, filter & daftar pembahasan lengkap, serta banner CTA Guest-to-Auth Handoff.
+- [x] **Konfirmasi Ujian** (`src/app/packages/[slug]/page.tsx`) — Ringkasan aturan paket, passing grade, tombol Mulai Ujian / Lanjutkan Sesi.
+- [x] **Ruang Ujian CAT** (`src/app/exam/[slug]/page.tsx`) — 1x fetch soal, Fisher-Yates shuffle, snapshot `localStorage` anti-refresh, timer mundur berbasis `endTimestamp` + auto-submit, panel matriks kanan (Desktop), drawer `Daftar Soal` (Mobile & Tablet), modal konfirmasi selesai ujian, dan navigasi keyboard.
+- [x] **Hasil Ujian CAT** (`src/app/result/[slug]/page.tsx`) — Ringkasan skor total & subtes, status passing grade, filter & daftar pembahasan lengkap, serta banner CTA Guest-to-Auth Handoff.
 
 ### 5C. Autentikasi & Guest-to-Auth Handoff (`feat/auth-and-handoff`)
 - [ ] **`Login`** (`src/app/login/page.tsx`) & **`Register`** (`src/app/register/page.tsx`) — Google OAuth (dengan ikon Google 4 warna), Email/Password, dan tautan lanjut sebagai Guest.
