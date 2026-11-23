@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Warm Paper Editorial Surface & Ink Tokens (docs/DESIGN.md) */
+  --color-paper: #F4F3EE;
+  --color-card: #FAF9F5;
+  --color-pure: #FFFFFF;
+  --color-pill: #EAE8E1;
+  --color-ink: #181816;
+  --color-ink-secondary: #575650;
+  --color-ink-muted: #787770;
+  --color-border-subtle: #D6D4CC;
+
+  /* Selection Green Brand Accent */
+  --color-accent: #43A018;
+  --color-accent-hover: #358412;
+  --color-accent-highlight: #CBE8B4;
+  --color-accent-soft: #E6F4DC;
+  --color-accent-dark: #26660B;
+
+  /* Semantic CAT Status */
+  --color-flag-bg: #FEF3C7;
+  --color-flag-border: #D97706;
+  --color-flag-text: #92400E;
+  --color-danger-bg: #FEE2E2;
+  --color-danger-border: #DC2626;
+  --color-danger-text: #991B1B;
+
+  /* Typography */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-plus-jakarta-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.tactile-card {
+  background-color: var(--color-card);
+  border: 1.5px solid var(--color-ink);
+  box-shadow: 0 6px 0 var(--color-ink);
+}
