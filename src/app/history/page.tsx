@@ -3,9 +3,10 @@ import { Footer, Navbar } from "@/components/ui";
 import { HistoryView } from "@/features/exam-result";
 
 export const metadata: Metadata = {
-  title: "Riwayat Tryout | simcat",
+  title: "Riwayat Tryout",
   description:
     "Riwayat skor dan status kelulusan simulasi CAT CPNS yang tersimpan pada akunmu.",
+  robots: { index: false, follow: false },
 };
 
 export default function HistoryPage() {

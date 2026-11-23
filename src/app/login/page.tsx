@@ -3,9 +3,10 @@ import { Suspense } from "react";
 import { AuthForm } from "@/features/auth";
 
 export const metadata: Metadata = {
-  title: "Masuk | simcat",
+  title: "Masuk",
   description:
     "Masuk ke simcat untuk menyimpan skor simulasi CAT CPNS ke Papan Peringkat dan Riwayat.",
+  robots: { index: false, follow: false },
 };
 
 export default function LoginPage() {

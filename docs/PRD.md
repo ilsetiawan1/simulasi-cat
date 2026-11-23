@@ -49,7 +49,8 @@
 * **Leaderboard & Guest-to-Auth Handoff (FR-06):** Papan peringkat per paket tryout untuk pengguna terdaftar serta pemindahan otomatis skor Guest dari `localStorage` ke database setelah login.
 
 ### Should-Have (Penting Setelah Alur Inti Stabil)
-* **Riwayat Tryout Pribadi:** Daftar percobaan tryout yang pernah diselesaikan oleh Authenticated User beserta tren skor per subtes.
+* **Riwayat Tryout Pribadi (`/history`):** Daftar percobaan tryout yang pernah diselesaikan oleh Authenticated User beserta rincian skor per subtes dan status passing grade.
+* **Profil Akun & Pengelolaan Avatar (`/profile`):** Pengaturan nama tampilan untuk Papan Peringkat serta pengelolaan foto profil (foto Google otomatis saat login, unggah foto ke Supabase Storage bucket `avatars` maks. 2 MB, atau 5 pilihan avatar bawaan) dengan alur pratinjau *Simpan/Batal Perubahan*.
 * **Filter & Pencarian Katalog:** Penyaringan paket berdasarkan jenis ujian (SKD Penuh, Mini Tryout TWK/TIU/TKP, SKB).
 
 ### Could-Have (Pengembangan Lanjutan)

@@ -12,13 +12,21 @@ export async function generateMetadata({ params }: PackagePageProps): Promise<Me
   const { slug } = await params;
   try {
     const pkg = await getActivePackageBySlug(slug);
+    const description = `${pkg.description} (${pkg.total_questions} soal, durasi ${pkg.duration_minutes} menit, gratis tanpa wajib login).`;
     return {
-      title: `${pkg.title} — Konfirmasi Ujian | simcat`,
-      description: pkg.description,
+      title: `${pkg.title} — Simulasi CAT CPNS`,
+      description,
+      alternates: { canonical: `/packages/${pkg.slug}` },
+      openGraph: {
+        title: `${pkg.title} | simcat`,
+        description,
+        url: `/packages/${pkg.slug}`,
+      },
     };
   } catch {
     return {
-      title: "Paket Tidak Ditemukan | simcat",
+      title: "Paket Tidak Ditemukan",
+      robots: { index: false, follow: false },
     };
   }
 }

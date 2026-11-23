@@ -9,7 +9,7 @@ Dokumen ini menjabarkan spesifikasi arsitektur, struktur modul, skema database, 
 * **Frontend:** Next.js (App Router) + React + TypeScript (`strict: true`) dengan **Feature-Driven Architecture (FDA)**
 * **Styling:** Tailwind CSS (mobile-first responsive, utility-first, tanpa runtime CSS-in-JS berat)
 * **Backend API Layer:** Next.js Route Handlers (`src/app/api/*`) yang mendelegasikan eksekusi ke **Modular Layered Architecture dengan Repository Pattern** (`src/modules/*`)
-* **Database & Auth:** Supabase PostgreSQL (Region: `ap-southeast-1` Singapore), Row Level Security (RLS), Supabase Auth (Google OAuth & Email)
+* **Database, Auth & Storage:** Supabase PostgreSQL (Region: `ap-southeast-1` Singapore), Row Level Security (RLS), Supabase Auth (Google OAuth & Email), Supabase Storage (bucket publik `avatars` maks. 2 MB dengan RLS per folder `<user_id>/`)
 * **Validasi Skema:** `zod` (digunakan pada seluruh batas input HTTP dan validasi payload `localStorage`, menggantikan RegEx)
 * **Runtime & Package Manager:** Bun (`bun install`, `bun run`, `bun test`)
 * **Testing:** `bun test` (unit test & API integration test untuk modul domain dan algoritma inti) + Playwright (End-to-End testing)
@@ -54,8 +54,15 @@ src/
 │   ├── packages/[slug]/page.tsx         # Halaman Konfirmasi Ujian
 │   ├── exam/[slug]/page.tsx             # Ruang Ujian CAT
 │   ├── result/[slug]/page.tsx           # Halaman Hasil & Pembahasan
-│   ├── leaderboard/page.tsx             # Papan Peringkat
+│   ├── leaderboard/page.tsx             # Papan Peringkat (dengan avatar peserta)
+│   ├── aturan-bkn/page.tsx              # Informasi Aturan & Passing Grade BKN
 │   ├── history/page.tsx                 # Riwayat Tryout Pribadi (Authenticated)
+│   ├── profile/page.tsx                 # Profil Akun, Avatar Picker & Upload Storage (Authenticated)
+│   ├── login/page.tsx                   # Halaman Masuk (Google OAuth & Email)
+│   ├── register/page.tsx                # Halaman Daftar Akun
+│   ├── robots.ts                        # SEO robots.txt dinamis
+│   ├── sitemap.ts                       # SEO sitemap.xml dinamis (halaman publik + paket aktif)
+│   ├── opengraph-image.tsx              # Dynamic OpenGraph preview image (1200x630)
 │   ├── auth/callback/route.ts           # Supabase OAuth callback handler
 │   └── api/                             # Thin Next.js Route Handlers -> panggil Module Controller
 │       ├── packages/route.ts

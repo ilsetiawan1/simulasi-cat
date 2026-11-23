@@ -16,9 +16,16 @@ import {
 } from "@/constants/passing-grade";
 
 export const metadata: Metadata = {
-  title: "Aturan & Passing Grade CAT BKN — simcat",
+  title: "Aturan & Passing Grade CAT CPNS BKN",
   description:
-    "Acuan resmi ambang batas (passing grade) SKD CPNS KepmenPANRB No. 321 Tahun 2024, bobot penilaian SKB, dan aturan tie-breaker.",
+    "Panduan lengkap ambang batas (passing grade) SKD CPNS KepmenPANRB No. 321 Tahun 2024 (TWK 65, TIU 80, TKP 166), bobot SKB, dan aturan tie-breaker BKN.",
+  alternates: { canonical: "/aturan-bkn" },
+  openGraph: {
+    title: "Aturan & Passing Grade CAT CPNS BKN | simcat",
+    description:
+      "Acuan resmi passing grade SKD CPNS (TWK 65, TIU 80, TKP 166), penilaian SKB, dan urutan tie-breaker BKN.",
+    url: "/aturan-bkn",
+  },
 };
 
 const SUBTEST_ROWS = [
