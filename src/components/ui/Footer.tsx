@@ -18,7 +18,7 @@ export function Footer() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-8 sm:flex-row sm:gap-16">
+          <div className="grid grid-cols-2 gap-6 sm:flex sm:flex-row sm:gap-16">
             <div>
               <p className="font-mono text-xs font-bold tracking-wider text-ink">
                 NAVIGASI

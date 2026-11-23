@@ -123,7 +123,7 @@ values
       {"id": "opt_5", "text": "Semua jawaban di atas benar", "score": 5}
     ]'::jsonb,
     false,
-    'Pasal 7 ayat (3) UU No. 23 Tahun 2019 menetapkan kelima nilai dasar Bela Negara: cinta tanah air, sadar berbangsa dan bernegara, setia pada Pancasila, rela berkorban, serta kemampuan awal bela negara. Opsi soal ini tidak diacak (shuffle_options = false).'
+    'Pasal 7 ayat (3) UU No. 23 Tahun 2019 menetapkan kelima nilai dasar Bela Negara: cinta tanah air, sadar berbangsa dan bernegara, setia pada Pancasila, rela berkorban, serta kemampuan awal bela negara.'
   ),
 
   -- TIU (Benar +5, Salah 0)
