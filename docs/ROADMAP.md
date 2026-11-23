@@ -11,7 +11,7 @@ Dokumen ini menjadi panduan eksekusi bertahap dari desain hingga rilis produksi 
 | **1** | Fondasi Dokumen & Desain UI/UX (FigCraft) | `docs/init-prd-tsd-design` | **Selesai** |
 | **2** | Setup Arsitektur Folder & Dependency Teknologi | `feat/project-setup` | **Selesai** |
 | **3** | Instalasi & Integrasi Database (Supabase) | `feat/supabase-schema-seed` | **Selesai** |
-| **4** | Backend (Core Engine & Repository Pattern) | `feat/backend-modules` | Belum Dimulai |
+| **4** | Backend (Core Engine & Repository Pattern) | `feat/backend-modules` | **Selesai** |
 | **5** | Frontend (Feature-Driven Architecture) | `feat/frontend-ui` *(dapat dipecah per fitur)* | Belum Dimulai |
 | **6** | Final Testing & Security QA | `test/qa-and-security` | Belum Dimulai |
 | **7** | Deployment (Vercel & Supabase Production) | `chore/production-deploy` | Belum Dimulai |
@@ -74,19 +74,19 @@ Dokumen ini menjadi panduan eksekusi bertahap dari desain hingga rilis produksi 
 **Target Branch:** `feat/backend-modules`
 
 **Deliverables:**
-- [ ] **Konstanta & Pure Exam Engine (dipakai bersama Server & Client Guest):**
+- [x] **Konstanta & Pure Exam Engine (dipakai bersama Server & Client Guest):**
   * `src/constants/passing-grade.ts` (KepmenPANRB No. 321 Tahun 2024: TWK 65, TIU 80, TKP 166, Total 311).
   * `src/lib/exam-engine/shuffle.ts` — Fisher-Yates Shuffle per blok subtes (`TWK -> TIU -> TKP`) & pengacakan opsi A-E dengan pengecualian `shuffle_options = false`.
   * `src/lib/exam-engine/scoring.ts` — Kalkulasi skor SKD Penuh, Mini Tryout, dan SKB (+5 / 0) + status passing grade.
   * `src/lib/storage/exam-storage.ts` — Safe `localStorage` persistence dengan validasi Zod.
-- [ ] **Shared Backend Infrastructure:**
+- [x] **Shared Backend Infrastructure:**
   * `src/middlewares/auth-guard.ts` (`supabase.auth.getUser()`), `src/middlewares/error-handler.ts` (tanpa bocor stack trace/error SQL), `src/utils/http-response.ts`.
-- [ ] **4 Modul Domain (`controller -> service -> repository` + colocated `*.openapi.ts` & `__tests__/`):**
+- [x] **4 Modul Domain (`controller -> service -> repository` + colocated `*.openapi.ts` & `__tests__/`):**
   * `src/modules/packages/` -> `GET /api/packages`
   * `src/modules/questions/` -> `GET /api/packages/[slug]/questions` (1x request seluruh soal paket)
   * `src/modules/scores/` -> `POST /api/scores` (hitung ulang skor di server dari `answers` + idempotency `client_attempt_id`), `GET /api/scores/me`, `GET /api/leaderboard` (terurut sesuai tie-breaker BKN)
   * `src/modules/profiles/` -> `PATCH /api/profile`
-- [ ] **Thin Route Handlers** di `src/app/api/*` yang hanya mendelegasikan ke Controller modul terkait.
+- [x] **Thin Route Handlers** di `src/app/api/*` yang hanya mendelegasikan ke Controller modul terkait.
 
 **Kriteria Selesai:** Seluruh endpoint berfungsi, strict layering terjaga, nol penggunaan RegEx, dan unit test untuk `shuffle.ts`, `scoring.ts`, dan `scores.service.ts` lulus 100%.
 
