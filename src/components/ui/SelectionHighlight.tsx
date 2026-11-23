@@ -33,7 +33,7 @@ export function SelectionHighlight({
         const tl = gsap.timeline({
           delay: 0.28,
           repeat: 2, // Total 3x putaran (1 awal + 2 pengulangan), reset otomatis saat pindah halaman/refresh
-          repeatDelay: 10,
+          repeatDelay: 5,
         });
 
         // Reset ke kondisi awal setiap awal iterasi agar pengulangan selalu mulus dari kiri ke kanan

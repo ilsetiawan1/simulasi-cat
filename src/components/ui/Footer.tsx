@@ -1,21 +1,33 @@
 import Link from "next/link";
+import { InstallAppButton } from "./InstallAppButton";
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t-[1.5px] border-ink bg-pill pb-20 md:pb-0">
+    <footer className="mt-20 border-t-[1.5px] border-ink bg-pill pb-24 md:pb-0">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-8 lg:px-12">
         <div className="flex flex-col justify-between gap-10 md:flex-row">
           <div className="max-w-md">
             <Link
               href="/"
-              className="font-display text-2xl font-bold tracking-[-0.04em] text-ink"
+              className="inline-flex items-center gap-2.5 font-display text-2xl font-bold tracking-[-0.04em] text-ink"
             >
-              simcat
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/logo.png"
+                alt=""
+                width={40}
+                height={40}
+                className="h-10 w-10 shrink-0 object-contain"
+              />
+              <span>simcat</span>
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-ink-secondary">
               Aplikasi latihan simulasi CAT CPNS gratis untuk SKD &amp; SKB. Mengacu
               ambang batas KepmenPANRB No. 321 Tahun 2024.
             </p>
+            <div className="mt-4">
+              <InstallAppButton />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-6 sm:flex sm:flex-row sm:gap-16">

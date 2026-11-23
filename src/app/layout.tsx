@@ -27,6 +27,7 @@ const googleVerification = getGoogleSiteVerification();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   applicationName: "simcat",
+  manifest: "/site.webmanifest",
   title: {
     default: "simcat — Simulasi CAT CPNS Standar BKN Gratis",
     template: "%s | simcat",
