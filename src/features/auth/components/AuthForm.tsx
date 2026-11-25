@@ -8,6 +8,7 @@ import { Button, PageReveal, SelectionHighlight, TactileCard } from "@/component
 import { loadPendingGuestResult } from "@/lib/storage/exam-storage";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { sanitizeRedirectPath } from "@/lib/supabase/redirect";
+import { PASSWORD_RULE_ITEMS, evaluatePasswordRules } from "../utils/password-rules";
 
 interface AuthFormProps {
   mode: "login" | "register";
@@ -25,8 +26,52 @@ const registerSchema = z.object({
     .min(2, "Nama tampilan minimal 2 karakter.")
     .max(60, "Nama tampilan maksimal 60 karakter."),
   email: z.string().trim().email("Format email tidak valid."),
-  password: z.string().min(8, "Kata sandi minimal 8 karakter."),
+  password: z
+    .string()
+    .min(8, "Kata sandi minimal 8 karakter.")
+    .refine(
+      (value) => evaluatePasswordRules(value).isValid,
+      "Kata sandi harus mengandung huruf kecil, huruf besar, dan angka atau simbol.",
+    ),
 });
+
+function EyeIcon({ visible }: { visible: boolean }) {
+  if (visible) {
+    return (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M3 3L21 21M10.58 10.58A2 2 0 0 0 13.42 13.42M9.88 5.09A10.94 10.94 0 0 1 12 4.9C17 4.9 21 9.5 22 12C21.55 13.11 20.69 14.57 19.42 15.84M6.61 6.61C4.62 7.96 3.1 10.12 2 12C3.27 14.47 6.82 19.1 12 19.1C13.86 19.1 15.54 18.54 16.95 17.65"
+          stroke="currentColor"
+          strokeWidth="1.9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    );
+  }
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M2 12C3.5 8.5 7.36 5 12 5C16.64 5 20.5 8.5 22 12C20.5 15.5 16.64 19 12 19C7.36 19 3.5 15.5 2 12Z"
+        stroke="currentColor"
+        strokeWidth="1.9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.9" />
+    </svg>
+  );
+}
+
+function getCallbackErrorMessage(code: string | null): string | null {
+  if (code === "email_verify_failed") {
+    return "Tautan verifikasi email tidak valid atau sudah kedaluwarsa. Silakan masuk atau daftar ulang.";
+  }
+  if (code === "auth_callback_failed") {
+    return "Autentikasi tidak selesai atau tautan sudah digunakan. Silakan masuk kembali.";
+  }
+  return null;
+}
 
 function GoogleLogoSvg() {
   return (
@@ -60,16 +105,16 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [displayName, setDisplayName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [hasPendingScore, setHasPendingScore] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(
-    callbackError === "auth_callback_failed"
-      ? "Autentikasi Google tidak selesai. Silakan coba lagi."
-      : null,
+  const [errorMessage, setErrorMessage] = useState<string | null>(() =>
+    getCallbackErrorMessage(callbackError),
   );
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const passwordRules = evaluatePasswordRules(password);
 
   useEffect(() => {
     setHasPendingScore(loadPendingGuestResult() !== null);
@@ -320,22 +365,64 @@ export function AuthForm({ mode }: AuthFormProps) {
             </div>
 
             <div>
-              <label
-                htmlFor="auth-password"
-                className="block text-sm font-medium text-ink"
-              >
-                Kata Sandi
-              </label>
+              <div className="flex items-center justify-between gap-2">
+                <label
+                  htmlFor="auth-password"
+                  className="block text-sm font-medium text-ink"
+                >
+                  Kata Sandi
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-pressed={showPassword}
+                  className="inline-flex items-center gap-1.5 rounded-md py-0.5 text-xs font-semibold text-accent-dark transition-colors hover:text-ink"
+                >
+                  <EyeIcon visible={showPassword} />
+                  <span>{showPassword ? "Sembunyikan" : "Tampilkan"}</span>
+                </button>
+              </div>
               <input
                 id="auth-password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete={isLogin ? "current-password" : "new-password"}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={isLogin ? "Masukkan kata sandi" : "Minimal 8 karakter"}
+                placeholder={isLogin ? "Masukkan kata sandi" : "Buat kata sandi yang kuat"}
                 className="mt-1.5 min-h-[44px] w-full rounded-[12px] border-[1.5px] border-ink bg-pure px-3.5 text-sm text-ink placeholder:text-ink-muted focus:border-accent focus:outline-none"
               />
+
+              {!isLogin && (
+                <ul
+                  aria-label="Kriteria kata sandi"
+                  className="mt-3 space-y-1.5"
+                >
+                  {PASSWORD_RULE_ITEMS.map((rule) => {
+                    const passed = passwordRules[rule.key];
+                    return (
+                      <li
+                        key={rule.key}
+                        className={`flex items-center gap-2 text-xs transition-colors ${
+                          passed ? "font-medium text-ink" : "text-ink-muted"
+                        }`}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={`inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-bold transition-colors ${
+                            passed
+                              ? "bg-accent text-pure"
+                              : "bg-border-subtle text-pure"
+                          }`}
+                        >
+                          ✓
+                        </span>
+                        <span>{rule.label}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
 
             <Button
