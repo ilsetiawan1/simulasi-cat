@@ -3,13 +3,98 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import Link from "next/link";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SelectionHighlight, TactileCard, buttonClasses } from "@/components/ui";
 
 gsap.registerPlugin(useGSAP);
 
+const HERO_SLIDE_COUNT = 3;
+const AUTO_SLIDE_MS = 3800;
+
 export function HeroSection() {
   const heroRef = useRef<HTMLElement | null>(null);
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const pauseTimerRef = useRef<number | null>(null);
+  const isPausedRef = useRef(false);
+  const activeSlideRef = useRef(0);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const scrollToSlide = useCallback((index: number) => {
+    const container = carouselRef.current;
+    if (!container) return;
+    const slides = container.querySelectorAll<HTMLElement>("[data-hero-card]");
+    const target = slides[index];
+    if (!target) return;
+    activeSlideRef.current = index;
+    setActiveSlide(index);
+    container.scrollTo({
+      left: Math.max(0, target.offsetLeft - container.offsetLeft),
+      behavior: "smooth",
+    });
+  }, []);
+
+  const handleCarouselScroll = useCallback(() => {
+    const container = carouselRef.current;
+    if (!container) return;
+    const slides = container.querySelectorAll<HTMLElement>("[data-hero-card]");
+    if (slides.length === 0) return;
+
+    const currentLeft = container.scrollLeft;
+    let closestIndex = 0;
+    let closestDistance = Number.POSITIVE_INFINITY;
+
+    slides.forEach((slide, idx) => {
+      const slideLeft = Math.max(0, slide.offsetLeft - container.offsetLeft);
+      const distance = Math.abs(slideLeft - currentLeft);
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = idx;
+      }
+    });
+
+    if (closestIndex !== activeSlideRef.current) {
+      activeSlideRef.current = closestIndex;
+      setActiveSlide(closestIndex);
+    }
+  }, []);
+
+  const pauseAutoSlide = useCallback(() => {
+    isPausedRef.current = true;
+    if (pauseTimerRef.current !== null) {
+      window.clearTimeout(pauseTimerRef.current);
+      pauseTimerRef.current = null;
+    }
+  }, []);
+
+  const resumeAutoSlideDelayed = useCallback(() => {
+    if (pauseTimerRef.current !== null) {
+      window.clearTimeout(pauseTimerRef.current);
+    }
+    pauseTimerRef.current = window.setTimeout(() => {
+      isPausedRef.current = false;
+      pauseTimerRef.current = null;
+    }, 5000);
+  }, []);
+
+  useEffect(() => {
+    const mobileMq = window.matchMedia("(max-width: 767px)");
+    const reducedMotionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const intervalId = window.setInterval(() => {
+      if (!mobileMq.matches || reducedMotionMq.matches || isPausedRef.current) {
+        return;
+      }
+      const next = (activeSlideRef.current + 1) % HERO_SLIDE_COUNT;
+      scrollToSlide(next);
+    }, AUTO_SLIDE_MS);
+
+    return () => {
+      window.clearInterval(intervalId);
+      if (pauseTimerRef.current !== null) {
+        window.clearTimeout(pauseTimerRef.current);
+      }
+    };
+  }, [scrollToSlide]);
 
   useGSAP(
     () => {
@@ -43,10 +128,10 @@ export function HeroSection() {
   return (
     <section
       ref={heroRef}
-      className="mx-auto max-w-[1280px] px-4 pt-10 pb-14 sm:px-8 lg:px-12 lg:pt-14 lg:pb-20"
+      className="mx-auto max-w-[1280px] px-4 pt-6 pb-8 sm:px-8 sm:pt-10 sm:pb-14 lg:px-12 lg:pt-14 lg:pb-20"
     >
       <div className="mx-auto max-w-4xl text-center">
-        <h1 className="font-mono text-[30px] leading-[1.25] tracking-[-0.025em] text-ink sm:text-[42px] lg:text-[52px] lg:leading-[1.2]">
+        <h1 className="font-mono text-[28px] leading-[1.24] tracking-[-0.025em] text-ink sm:text-[42px] lg:text-[52px] lg:leading-[1.2]">
           Simulasi{" "}
           <SelectionHighlight animate className="my-1">
             CAT CPNS
@@ -57,7 +142,7 @@ export function HeroSection() {
         {/* Floating Quick-Action Pill Bar */}
         <div
           data-hero-pill
-          className="mx-auto mt-8 flex max-w-[680px] flex-col items-stretch justify-between gap-3 rounded-[14px] bg-pill p-2.5 sm:flex-row sm:items-center sm:px-5 sm:py-2"
+          className="mx-auto mt-5 flex max-w-[680px] flex-col items-stretch justify-between gap-3 rounded-[14px] bg-pill p-2 sm:mt-8 sm:flex-row sm:items-center sm:px-5 sm:py-2"
         >
           <div className="hidden flex-1 items-center justify-center gap-4 text-[13px] font-medium text-ink-secondary sm:flex">
             <span>Tanpa Wajib Login</span>
@@ -75,25 +160,33 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* 3 Iconic Editorial Feature Cards */}
-      <div className="mx-auto mt-12 grid max-w-[1040px] grid-cols-1 gap-6 md:grid-cols-3 lg:mt-16 lg:items-start lg:gap-8">
+      {/* 3 Iconic Editorial Feature Cards: Auto-sliding Carousel on Mobile -> 3-Col Grid on Tablet/Desktop */}
+      <div
+        ref={carouselRef}
+        onScroll={handleCarouselScroll}
+        onTouchStart={pauseAutoSlide}
+        onTouchEnd={resumeAutoSlideDelayed}
+        onPointerDown={pauseAutoSlide}
+        onPointerUp={resumeAutoSlideDelayed}
+        className="mx-auto mt-6 flex max-w-[1040px] snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mt-12 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0 lg:mt-16 lg:items-start lg:gap-8"
+      >
         {/* Card 1 */}
-        <div data-hero-card>
-          <TactileCard className="p-6 text-center transition-transform lg:-rotate-2 lg:hover:rotate-0">
+        <div data-hero-card className="w-[82%] shrink-0 snap-start md:w-auto md:shrink">
+          <TactileCard className="p-4 text-center transition-transform md:p-6 lg:-rotate-2 lg:hover:rotate-0">
             <p className="text-[10px] font-semibold tracking-[0.08em] text-ink-muted uppercase">
               ZERO-FRICTION MODE
             </p>
-            <h2 className="mt-2 text-lg font-semibold leading-snug text-ink lg:text-xl">
+            <h2 className="mt-1.5 text-[15px] font-semibold leading-snug text-ink md:mt-2 md:text-lg lg:text-xl">
               Langsung latihan, tanpa wajib daftar
             </h2>
-            <div className="mt-6 flex justify-center">
+            <div className="mt-3 flex justify-center md:mt-6">
               <svg
                 width="128"
                 height="96"
                 viewBox="0 0 140 104"
                 fill="none"
                 aria-hidden="true"
-                className="text-ink"
+                className="h-[64px] w-auto text-ink md:h-[96px]"
               >
                 <path
                   d="M20 75H120L130 92H10L20 75Z"
@@ -125,22 +218,22 @@ export function HeroSection() {
         </div>
 
         {/* Card 2 (Foreground Center) */}
-        <div data-hero-card>
-          <TactileCard className="p-6 text-center lg:translate-y-5">
+        <div data-hero-card className="w-[82%] shrink-0 snap-start md:w-auto md:shrink">
+          <TactileCard className="p-4 text-center md:p-6 lg:translate-y-5">
             <p className="text-[10px] font-semibold tracking-[0.08em] text-ink-muted uppercase">
               ANTI-HAFAL SOAL
             </p>
-            <h2 className="mt-2 text-lg font-semibold leading-snug text-ink lg:text-xl">
+            <h2 className="mt-1.5 text-[15px] font-semibold leading-snug text-ink md:mt-2 md:text-lg lg:text-xl">
               Acak soal &amp; opsi di setiap sesi
             </h2>
-            <div className="mt-6 flex justify-center">
+            <div className="mt-3 flex justify-center md:mt-6">
               <svg
                 width="128"
                 height="96"
                 viewBox="0 0 140 104"
                 fill="none"
                 aria-hidden="true"
-                className="text-ink"
+                className="h-[64px] w-auto text-ink md:h-[96px]"
               >
                 <path
                   d="M18 94H46V72H76V50H108V28H130"
@@ -168,22 +261,22 @@ export function HeroSection() {
         </div>
 
         {/* Card 3 */}
-        <div data-hero-card>
-          <TactileCard className="p-6 text-center transition-transform lg:rotate-2 lg:hover:rotate-0">
+        <div data-hero-card className="w-[82%] shrink-0 snap-start md:w-auto md:shrink">
+          <TactileCard className="p-4 text-center transition-transform md:p-6 lg:rotate-2 lg:hover:rotate-0">
             <p className="text-[10px] font-semibold tracking-[0.08em] text-ink-muted uppercase">
               STANDAR BKN 2024
             </p>
-            <h2 className="mt-2 text-lg font-semibold leading-snug text-ink lg:text-xl">
+            <h2 className="mt-1.5 text-[15px] font-semibold leading-snug text-ink md:mt-2 md:text-lg lg:text-xl">
               Skor &amp; pembahasan otomatis instan
             </h2>
-            <div className="mt-6 flex justify-center">
+            <div className="mt-3 flex justify-center md:mt-6">
               <svg
                 width="128"
                 height="96"
                 viewBox="0 0 140 104"
                 fill="none"
                 aria-hidden="true"
-                className="text-ink"
+                className="h-[64px] w-auto text-ink md:h-[96px]"
               >
                 <path
                   d="M40 20H100L94 58C92 72 82 80 70 80C58 80 48 72 46 58L40 20Z"
@@ -203,6 +296,38 @@ export function HeroSection() {
             </div>
           </TactileCard>
         </div>
+      </div>
+
+      {/* Mobile Carousel Pagination Dots */}
+      <div
+        className="mt-2 flex items-center justify-center gap-1 md:hidden"
+        role="tablist"
+        aria-label="Navigasi fitur utama"
+      >
+        {[0, 1, 2].map((index) => {
+          const isActive = activeSlide === index;
+          return (
+            <button
+              key={index}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-label={`Fitur ${index + 1}`}
+              onClick={() => {
+                pauseAutoSlide();
+                scrollToSlide(index);
+                resumeAutoSlideDelayed();
+              }}
+              className="flex min-h-[28px] items-center justify-center px-1"
+            >
+              <span
+                className={`block h-1.5 rounded-full transition-all duration-300 ${
+                  isActive ? "w-5 bg-accent" : "w-1.5 bg-border-subtle"
+                }`}
+              />
+            </button>
+          );
+        })}
       </div>
     </section>
   );

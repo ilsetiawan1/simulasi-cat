@@ -145,7 +145,7 @@ export function CatalogSection() {
     <section
       ref={sectionRef}
       id="katalog"
-      className="mx-auto max-w-[1280px] scroll-mt-10 px-4 py-14 sm:px-8 lg:px-12 lg:py-20"
+      className="mx-auto max-w-[1280px] scroll-mt-10 px-4 py-8 sm:px-8 sm:py-14 lg:px-12 lg:py-20"
     >
       <div
         data-catalog-head
@@ -270,69 +270,69 @@ export function CatalogSection() {
                   borderStrong={isFeatured}
                   className="flex w-full flex-col overflow-hidden"
                 >
-                {isFeatured && (
-                  <div className="border-b border-ink/20 bg-accent-highlight px-6 py-2.5 font-mono text-xs font-bold text-ink">
+                  {/* Header strip seragam di semua kartu agar judul & deskripsi sejajar horizontal */}
+                  <div
+                    className={`flex min-h-[38px] items-center border-b px-6 py-2 font-mono uppercase ${
+                      isFeatured
+                        ? "border-ink/20 bg-accent-highlight text-xs font-bold text-ink"
+                        : "border-border-subtle/70 bg-pill/45 text-[11px] font-semibold tracking-[0.06em] text-ink-muted"
+                    }`}
+                  >
                     {getCategoryLabel(pkg.category)}
                   </div>
-                )}
 
-                <div className="flex flex-1 flex-col p-6">
-                  {!isFeatured && (
-                    <p className="text-[11px] font-semibold tracking-[0.06em] text-ink-muted uppercase">
-                      {getCategoryLabel(pkg.category)}
+                  <div className="flex flex-1 flex-col p-6">
+                    <h3 className="text-xl font-semibold text-ink">{pkg.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
+                      {pkg.description}
                     </p>
-                  )}
 
-                  <h3 className="mt-1.5 text-xl font-semibold text-ink">{pkg.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
-                    {pkg.description}
-                  </p>
+                    {/* Footer terpadu (kotak metadata + CTA) agar selalu sejajar di Desktop & Tablet */}
+                    <div className="mt-auto flex flex-col gap-4 pt-5">
+                      <div className="flex min-h-[76px] flex-col justify-center rounded-xl bg-pill p-4 font-mono text-xs text-ink">
+                        <p className="font-bold">
+                          {pkg.total_questions} Soal &bull; {pkg.duration_minutes} Menit
+                        </p>
+                        {pkg.category === "SKD_FULL" && (
+                          <p className="mt-1.5 font-bold text-accent-dark">
+                            PG: TWK {pkg.passing_grade_twk ?? 65} | TIU{" "}
+                            {pkg.passing_grade_tiu ?? 80} | TKP {pkg.passing_grade_tkp ?? 166}
+                          </p>
+                        )}
+                        {pkg.category === "MINI_TWK" && (
+                          <p className="mt-1.5 text-ink-secondary">
+                            Ambang Batas TWK: {pkg.passing_grade_twk ?? 65} (Benar +5, Salah 0)
+                          </p>
+                        )}
+                        {pkg.category === "MINI_TIU" && (
+                          <p className="mt-1.5 text-ink-secondary">
+                            Ambang Batas TIU: {pkg.passing_grade_tiu ?? 80} (Benar +5, Salah 0)
+                          </p>
+                        )}
+                        {pkg.category === "MINI_TKP" && (
+                          <p className="mt-1.5 text-ink-secondary">
+                            Ambang Batas TKP: {pkg.passing_grade_tkp ?? 166} (Skala 1 s.d. 5)
+                          </p>
+                        )}
+                        {pkg.category === "SKB" && (
+                          <p className="mt-1.5 text-ink-secondary">
+                            Penilaian: Benar +5 &bull; Salah / Kosong 0
+                          </p>
+                        )}
+                      </div>
 
-                  <div className="mt-5 rounded-xl bg-pill p-4 font-mono text-xs text-ink">
-                    <p className="font-bold">
-                      {pkg.total_questions} Soal &bull; {pkg.duration_minutes} Menit
-                    </p>
-                    {pkg.category === "SKD_FULL" && (
-                      <p className="mt-1.5 font-bold text-accent-dark">
-                        PG: TWK {pkg.passing_grade_twk ?? 65} | TIU{" "}
-                        {pkg.passing_grade_tiu ?? 80} | TKP {pkg.passing_grade_tkp ?? 166}
-                      </p>
-                    )}
-                    {pkg.category === "MINI_TWK" && (
-                      <p className="mt-1.5 text-ink-secondary">
-                        Ambang Batas TWK: {pkg.passing_grade_twk ?? 65} (Benar +5, Salah 0)
-                      </p>
-                    )}
-                    {pkg.category === "MINI_TIU" && (
-                      <p className="mt-1.5 text-ink-secondary">
-                        Ambang Batas TIU: {pkg.passing_grade_tiu ?? 80} (Benar +5, Salah 0)
-                      </p>
-                    )}
-                    {pkg.category === "MINI_TKP" && (
-                      <p className="mt-1.5 text-ink-secondary">
-                        Ambang Batas TKP: {pkg.passing_grade_tkp ?? 166} (Skala 1 s.d. 5)
-                      </p>
-                    )}
-                    {pkg.category === "SKB" && (
-                      <p className="mt-1.5 text-ink-secondary">
-                        Penilaian: Benar +5 &bull; Salah / Kosong 0
-                      </p>
-                    )}
+                      <Link
+                        href={`/packages/${pkg.slug}`}
+                        className={buttonClasses(
+                          isFeatured ? "primary" : "outline",
+                          "rounded",
+                          "w-full",
+                        )}
+                      >
+                        {isFeatured ? "Mulai SKD Penuh →" : "Lihat Aturan & Mulai →"}
+                      </Link>
+                    </div>
                   </div>
-
-                  <div className="mt-auto pt-6">
-                    <Link
-                      href={`/packages/${pkg.slug}`}
-                      className={buttonClasses(
-                        isFeatured ? "primary" : "outline",
-                        "rounded",
-                        "w-full",
-                      )}
-                    >
-                      {isFeatured ? "Mulai SKD Penuh →" : "Lihat Aturan & Mulai →"}
-                    </Link>
-                  </div>
-                </div>
                 </TactileCard>
               </div>
             );
