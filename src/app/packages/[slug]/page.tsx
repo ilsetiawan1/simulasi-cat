@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Footer, Navbar, PageReveal } from "@/components/ui";
+import { EmptyState, Footer, Navbar, PageReveal, buttonClasses } from "@/components/ui";
 import { PackageConfirmView } from "@/features/exam-catalog";
 import { getActivePackageBySlug } from "@/modules/packages/packages.service";
 
@@ -47,7 +48,21 @@ export default async function PackageConfirmPage({ params }: PackagePageProps) {
       <div className="flex-1">
         <PageReveal>
           <div data-reveal>
-            <PackageConfirmView pkg={pkg} />
+            {pkg.category === "SKB" ? (
+              <main className="mx-auto w-full max-w-[720px] px-4 py-12 sm:px-6">
+                <EmptyState
+                  title="Simulasi SKB — Segera Hadir"
+                  description="Bank soal dan simulasi Seleksi Kompetensi Bidang (SKB) sedang kami siapkan. Untuk saat ini, kamu bisa berlatih Tryout SKD Penuh atau Latihan Subtes TWK, TIU, dan TKP."
+                  action={
+                    <Link href="/#katalog" className={buttonClasses("primary", "rounded")}>
+                      Kembali ke Katalog SKD →
+                    </Link>
+                  }
+                />
+              </main>
+            ) : (
+              <PackageConfirmView pkg={pkg} />
+            )}
           </div>
         </PageReveal>
       </div>

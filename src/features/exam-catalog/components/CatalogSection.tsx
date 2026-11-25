@@ -25,7 +25,7 @@ function getCategoryLabel(category: ExamCategory): string {
   if (category === "MINI_TWK") return "LATIHAN SUBTES · TWK";
   if (category === "MINI_TIU") return "LATIHAN SUBTES · TIU";
   if (category === "MINI_TKP") return "LATIHAN SUBTES · TKP";
-  return "SKB · FORMASI JABATAN";
+  return "SKB · SEGERA HADIR";
 }
 
 function matchesFilter(pkg: ExamPackageRow, filter: FilterOption): boolean {
@@ -57,6 +57,9 @@ export function CatalogSection() {
   }
 
   useEffect(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      setFilter("SKD_FULL");
+    }
     void loadPackages();
   }, []);
 
@@ -162,7 +165,9 @@ export function CatalogSection() {
         <p className="max-w-md text-sm text-ink-secondary md:text-right">
           {filter === "MINI"
             ? "Latihan fokus per materi. Skor tersimpan di Riwayat pribadi (tidak masuk Papan Peringkat)."
-            : "Semua tryout gratis untuk Guest. Skor SKD Penuh & SKB masuk Papan Peringkat saat login."}
+            : filter === "SKB"
+              ? "Simulasi SKB formasi jabatan sedang disiapkan dan akan segera hadir."
+              : "Semua tryout gratis untuk Guest. Skor SKD Penuh masuk Papan Peringkat saat login."}
         </p>
       </div>
 
@@ -171,7 +176,7 @@ export function CatalogSection() {
         data-catalog-tabs
         className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
       >
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-nowrap gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:flex-wrap sm:overflow-visible sm:pb-0">
           {FILTERS.map((item) => {
             const active = filter === item.value;
             return (
@@ -182,7 +187,7 @@ export function CatalogSection() {
                   setFilter(item.value);
                   if (item.value !== "SKB") setSkbQuery("");
                 }}
-                className={`min-h-[44px] rounded-[10px] px-4 text-xs font-semibold transition-colors ${
+                className={`min-h-[42px] shrink-0 whitespace-nowrap rounded-[10px] px-3.5 text-xs font-semibold transition-colors sm:min-h-[44px] sm:px-4 ${
                   active
                     ? "border-[1.5px] border-ink bg-accent-highlight text-ink"
                     : "border border-border-subtle bg-pill text-ink-secondary hover:text-ink"
@@ -321,16 +326,30 @@ export function CatalogSection() {
                         )}
                       </div>
 
-                      <Link
-                        href={`/packages/${pkg.slug}`}
-                        className={buttonClasses(
-                          isFeatured ? "primary" : "outline",
-                          "rounded",
-                          "w-full",
-                        )}
-                      >
-                        {isFeatured ? "Mulai SKD Penuh →" : "Lihat Aturan & Mulai →"}
-                      </Link>
+                      {pkg.category === "SKB" ? (
+                        <button
+                          type="button"
+                          disabled
+                          className={buttonClasses(
+                            "outline",
+                            "rounded",
+                            "w-full cursor-not-allowed opacity-60",
+                          )}
+                        >
+                          Segera Hadir
+                        </button>
+                      ) : (
+                        <Link
+                          href={`/packages/${pkg.slug}`}
+                          className={buttonClasses(
+                            isFeatured ? "primary" : "outline",
+                            "rounded",
+                            "w-full",
+                          )}
+                        >
+                          {isFeatured ? "Mulai SKD Penuh →" : "Lihat Aturan & Mulai →"}
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </TactileCard>

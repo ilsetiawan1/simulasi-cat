@@ -311,18 +311,22 @@ export function ProfileView() {
               )}
             </div>
 
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h2 className="truncate text-lg font-bold text-ink">
                 {displayName.trim() || profile.display_name}
               </h2>
               <p className="truncate text-xs text-ink-secondary sm:text-sm">
                 {user.email}
               </p>
-              <p className="mt-2 inline-flex items-center gap-2 text-xs font-semibold text-accent-dark">
-                <span className="h-2 w-2 rounded-full bg-accent" aria-hidden="true" />
-                {isGoogleProvider ? "Terhubung dengan Google" : "Akun Email"} • Bergabung{" "}
-                {formatMonthYear(profile.created_at)}
-              </p>
+              <div className="mt-1.5 flex flex-col gap-0.5 text-[11px] leading-snug sm:mt-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2.5 sm:text-xs">
+                <span className="inline-flex items-center gap-1.5 font-semibold text-accent-dark">
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+                  <span>{isGoogleProvider ? "Terhubung dengan Google" : "Akun Email"}</span>
+                </span>
+                <span className="text-ink-muted">
+                  Bergabung {formatMonthYear(profile.created_at)}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -384,7 +388,11 @@ export function ProfileView() {
                 <span className="font-semibold text-ink">Simpan Perubahan</span> untuk menerapkannya.
               </p>
 
-              <div className="mt-4 flex flex-wrap items-center gap-3">
+              <div
+                className={`mt-4 grid gap-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-3 ${
+                  googleAvatarUrl ? "grid-cols-2" : "grid-cols-1"
+                }`}
+              >
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -396,6 +404,7 @@ export function ProfileView() {
                   variant="outline"
                   disabled={saving}
                   onClick={() => fileInputRef.current?.click()}
+                  className="w-full px-3 text-xs sm:w-auto sm:px-5 sm:text-sm"
                 >
                   Upload Foto
                 </Button>
@@ -405,15 +414,15 @@ export function ProfileView() {
                     variant="subtle"
                     disabled={saving}
                     onClick={() => handleSelectPresetOrGoogle(googleAvatarUrl)}
+                    className="w-full px-3 text-xs sm:w-auto sm:px-5 sm:text-sm"
                   >
                     Gunakan Foto Google
                   </Button>
                 )}
-
-                <span className="text-xs text-ink-muted">
-                  JPG, PNG, atau WebP • Maks. 2 MB
-                </span>
               </div>
+              <p className="mt-2 text-xs text-ink-muted">
+                Format JPG, PNG, atau WebP (maks. 2 MB)
+              </p>
 
               <div className="mt-5">
                 <p className="text-xs font-semibold text-ink-secondary">

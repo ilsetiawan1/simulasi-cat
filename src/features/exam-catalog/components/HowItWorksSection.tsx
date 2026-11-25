@@ -11,27 +11,27 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 const STEPS = [
   {
     number: "01",
-    title: "Pilih Paket Tryout",
+    title: "Pilih Mode Ujian",
     description:
-      "Pilih SKD Penuh (110 soal), Mini Tryout per subtes, atau SKB langsung sebagai Guest tanpa daftar akun.",
+      "Mulai Tryout SKD Penuh (110 soal) atau Latihan Subtes TWK, TIU, dan TKP langsung gratis tanpa wajib daftar akun.",
   },
   {
     number: "02",
     title: "Acak Soal & Opsi A-E",
     description:
-      "Seluruh soal dimuat dalam 1x request lalu diacak dengan Fisher-Yates di dalam blok TWK, TIU, dan TKP.",
+      "Kombinasi soal dan urutan pilihan jawaban diacak otomatis di setiap sesi, dengan urutan blok SKD tetap TWK, TIU, lalu TKP.",
   },
   {
     number: "03",
     title: "Kerjakan CAT Real-Time",
     description:
-      "Timer mundur 100 menit, tandai ragu-ragu, dan auto-save localStorage agar aman dari refresh browser.",
+      "Dilengkapi timer mundur standar BKN, penanda ragu-ragu, dan penyimpanan otomatis agar jawaban tetap aman saat halaman di-refresh.",
   },
   {
     number: "04",
     title: "Evaluasi & Peringkat",
     description:
-      "Lihat rincian skor, status passing grade, pembahasan lengkap, lalu masuk untuk simpan ke Leaderboard.",
+      "Lihat rincian skor, status passing grade, dan pembahasan lengkap tiap soal, lalu masuk untuk menyimpan skormu ke Papan Peringkat.",
   },
 ] as const;
 
