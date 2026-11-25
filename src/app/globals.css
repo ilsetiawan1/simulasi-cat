@@ -43,3 +43,12 @@ body {
   border: 1.5px solid var(--color-ink);
   box-shadow: 0 6px 0 var(--color-ink);
 }
+
+/* Cegah auto-zoom WebKit iOS saat fokus input/select/textarea dengan font < 16px */
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
