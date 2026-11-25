@@ -79,8 +79,16 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-border-subtle pt-6 text-xs text-ink-muted">
-          simulasi-cat &bull; Gratis 100% tanpa biaya langganan
+        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border-subtle pt-6 text-xs text-ink-muted sm:flex-row sm:items-center">
+          <span>simulasi-cat &bull; Gratis 100% tanpa biaya langganan</span>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href="/privacy" className="hover:text-ink">
+              Kebijakan Privasi
+            </Link>
+            <Link href="/terms" className="hover:text-ink">
+              Syarat &amp; Ketentuan
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
