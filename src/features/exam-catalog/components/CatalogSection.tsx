@@ -14,18 +14,18 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 type FilterOption = "ALL" | "SKD_FULL" | "MINI" | "SKB";
 
 const FILTERS: { value: FilterOption; label: string }[] = [
-  { value: "ALL", label: "Semua Paket" },
+  { value: "ALL", label: "Semua" },
   { value: "SKD_FULL", label: "SKD Penuh" },
-  { value: "MINI", label: "Mini Tryout" },
+  { value: "MINI", label: "Latihan Subtes" },
   { value: "SKB", label: "SKB" },
 ];
 
 function getCategoryLabel(category: ExamCategory): string {
-  if (category === "SKD_FULL") return "REKOMENDASI • STANDAR CAT BKN";
-  if (category === "MINI_TWK") return "LATIHAN CEPAT • TWK";
-  if (category === "MINI_TIU") return "LATIHAN CEPAT • TIU";
-  if (category === "MINI_TKP") return "LATIHAN CEPAT • TKP";
-  return "SELEKSI KOMPETENSI BIDANG";
+  if (category === "SKD_FULL") return "SKD PENUH · STANDAR BKN";
+  if (category === "MINI_TWK") return "LATIHAN SUBTES · TWK";
+  if (category === "MINI_TIU") return "LATIHAN SUBTES · TIU";
+  if (category === "MINI_TKP") return "LATIHAN SUBTES · TKP";
+  return "SKB · FORMASI JABATAN";
 }
 
 function matchesFilter(pkg: ExamPackageRow, filter: FilterOption): boolean {
@@ -39,6 +39,7 @@ export function CatalogSection() {
   const gridRef = useRef<HTMLDivElement | null>(null);
   const [packages, setPackages] = useState<ExamPackageRow[]>([]);
   const [filter, setFilter] = useState<FilterOption>("ALL");
+  const [skbQuery, setSkbQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,7 +60,20 @@ export function CatalogSection() {
     void loadPackages();
   }, []);
 
-  const visiblePackages = packages.filter((pkg) => matchesFilter(pkg, filter));
+  const skbPackagesCount = packages.filter((pkg) => pkg.category === "SKB").length;
+  const showSkbSearch = filter === "SKB" && skbPackagesCount >= 4;
+  const normalizedQuery = skbQuery.trim().toLowerCase();
+
+  const visiblePackages = packages.filter((pkg) => {
+    if (!matchesFilter(pkg, filter)) return false;
+    if (showSkbSearch && normalizedQuery.length > 0) {
+      return (
+        pkg.title.toLowerCase().includes(normalizedQuery) ||
+        pkg.description.toLowerCase().includes(normalizedQuery)
+      );
+    }
+    return true;
+  });
 
   // Scroll reveal untuk header & tab filter Katalog Tryout
   useGSAP(
@@ -146,30 +160,55 @@ export function CatalogSection() {
           </h2>
         </div>
         <p className="max-w-md text-sm text-ink-secondary md:text-right">
-          Semua paket gratis untuk Guest. Login setelah selesai jika ingin menyimpan
-          skor ke Papan Peringkat.
+          {filter === "MINI"
+            ? "Latihan fokus per materi. Skor tersimpan di Riwayat pribadi (tidak masuk Papan Peringkat)."
+            : "Semua tryout gratis untuk Guest. Skor SKD Penuh & SKB masuk Papan Peringkat saat login."}
         </p>
       </div>
 
-      {/* Category Filter Tabs */}
-      <div data-catalog-tabs className="mt-6 flex flex-wrap gap-2">
-        {FILTERS.map((item) => {
-          const active = filter === item.value;
-          return (
-            <button
-              key={item.value}
-              type="button"
-              onClick={() => setFilter(item.value)}
-              className={`min-h-[44px] rounded-[10px] px-4 text-xs font-semibold transition-colors ${
-                active
-                  ? "border-[1.5px] border-accent bg-accent-highlight text-ink"
-                  : "border border-border-subtle bg-pill text-ink-secondary hover:text-ink"
-              }`}
-            >
-              {item.label}
-            </button>
-          );
-        })}
+      {/* Category Filter Tabs + Auto-Search Formasi SKB (muncul otomatis saat SKB >= 4) */}
+      <div
+        data-catalog-tabs
+        className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex flex-wrap gap-2">
+          {FILTERS.map((item) => {
+            const active = filter === item.value;
+            return (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => {
+                  setFilter(item.value);
+                  if (item.value !== "SKB") setSkbQuery("");
+                }}
+                className={`min-h-[44px] rounded-[10px] px-4 text-xs font-semibold transition-colors ${
+                  active
+                    ? "border-[1.5px] border-ink bg-accent-highlight text-ink"
+                    : "border border-border-subtle bg-pill text-ink-secondary hover:text-ink"
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {showSkbSearch && (
+          <div className="w-full sm:w-[280px]">
+            <label htmlFor="catalog-skb-search" className="sr-only">
+              Cari formasi jabatan SKB
+            </label>
+            <input
+              id="catalog-skb-search"
+              type="search"
+              value={skbQuery}
+              onChange={(e) => setSkbQuery(e.target.value)}
+              placeholder="Cari formasi jabatan..."
+              className="min-h-[44px] w-full rounded-[10px] border-[1.5px] border-ink bg-pure px-3.5 text-sm text-ink placeholder:text-ink-muted focus:border-accent focus:outline-none"
+            />
+          </div>
+        )}
       </div>
 
       {/* Loading State */}
@@ -281,7 +320,7 @@ export function CatalogSection() {
                     )}
                   </div>
 
-                  <div className="mt-6 pt-1">
+                  <div className="mt-auto pt-6">
                     <Link
                       href={`/packages/${pkg.slug}`}
                       className={buttonClasses(

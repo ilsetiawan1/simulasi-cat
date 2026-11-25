@@ -90,9 +90,11 @@ export async function findScoresByUserId(
 export async function findLeaderboardByPackageId(
   supabase: SupabaseClient,
   packageId: string,
-  limit = 50,
+  limit = 100,
 ): Promise<LeaderboardQueryRow[]> {
-  // Mengikuti indeks komposit idx_scores_leaderboard_rank (Tie-Breaker BKN)
+  // Mengikuti indeks komposit idx_scores_leaderboard_rank (Tie-Breaker BKN).
+  // Ambil batch lebih besar untuk ruang deduplikasi 1 skor terbaik per user di service.
+  const fetchLimit = Math.min(Math.max(limit * 5, 100), 500);
   const { data, error } = await supabase
     .from("scores")
     .select(`${SCORE_COLUMNS}, profiles(display_name, avatar_url)`)
@@ -102,7 +104,7 @@ export async function findLeaderboardByPackageId(
     .order("score_tiu", { ascending: false })
     .order("score_twk", { ascending: false })
     .order("completed_at", { ascending: true })
-    .limit(limit);
+    .limit(fetchLimit);
 
   if (error) {
     throw error;

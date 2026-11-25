@@ -10,7 +10,7 @@ values
   (
     '11111111-1111-4111-8111-111111111101',
     'skd-penuh-01',
-    'Simulasi SKD Penuh - Paket 01',
+    'Tryout SKD CPNS',
     'Simulasi lengkap standar CAT BKN dengan urutan blok TWK, TIU, dan TKP serta evaluasi passing grade KepmenPANRB No. 321 Tahun 2024.',
     'SKD_FULL',
     100,
@@ -23,7 +23,7 @@ values
   (
     '11111111-1111-4111-8111-111111111102',
     'mini-twk-01',
-    'Latihan Cepat TWK - Paket 01',
+    'Tes Wawasan Kebangsaan (TWK)',
     'Latihan terfokus Tes Wawasan Kebangsaan meliputi Pancasila, UUD 1945, NKRI, dan Bhinneka Tunggal Ika.',
     'MINI_TWK',
     25,
@@ -36,7 +36,7 @@ values
   (
     '11111111-1111-4111-8111-111111111103',
     'mini-tiu-01',
-    'Latihan Cepat TIU - Paket 01',
+    'Tes Intelegensia Umum (TIU)',
     'Latihan terfokus Tes Intelegensia Umum meliputi kemampuan verbal, numerik, dan figural/logika.',
     'MINI_TIU',
     30,
@@ -49,7 +49,7 @@ values
   (
     '11111111-1111-4111-8111-111111111104',
     'mini-tkp-01',
-    'Latihan Cepat TKP - Paket 01',
+    'Tes Karakteristik Pribadi (TKP)',
     'Latihan terfokus Tes Karakteristik Pribadi skala penilaian 1 s.d. 5 untuk pelayanan publik, jejaring kerja, dan profesionalisme.',
     'MINI_TKP',
     35,
@@ -62,7 +62,7 @@ values
   (
     '11111111-1111-4111-8111-111111111105',
     'skb-pranata-komputer-01',
-    'Simulasi SKB Pranata Komputer - Paket 01',
+    'SKB Pranata Komputer',
     'Latihan Seleksi Kompetensi Bidang jabatan Pranata Komputer (basis data, jaringan, keamanan informasi, dan rekayasa perangkat lunak).',
     'SKB',
     90,

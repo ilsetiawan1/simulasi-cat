@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Footer, Navbar } from "@/components/ui";
+import { Footer, Navbar, PageReveal } from "@/components/ui";
 import { PackageConfirmView } from "@/features/exam-catalog";
 import { getActivePackageBySlug } from "@/modules/packages/packages.service";
 
@@ -45,7 +45,11 @@ export default async function PackageConfirmPage({ params }: PackagePageProps) {
     <div className="flex min-h-screen flex-col bg-paper text-ink">
       <Navbar />
       <div className="flex-1">
-        <PackageConfirmView pkg={pkg} />
+        <PageReveal>
+          <div data-reveal>
+            <PackageConfirmView pkg={pkg} />
+          </div>
+        </PageReveal>
       </div>
       <Footer />
     </div>

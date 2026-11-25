@@ -66,7 +66,7 @@ export function Footer() {
                 </li>
                 <li>
                   <Link href="/#katalog" className="hover:text-ink">
-                    Latihan Cepat Subtes
+                    Latihan Subtes
                   </Link>
                 </li>
                 <li>

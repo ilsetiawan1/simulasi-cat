@@ -6,6 +6,8 @@ import { formatCountdown } from "../hooks/useCatExam";
 
 interface ExamHeaderProps {
   packageTitle: string;
+  currentNumber: number;
+  totalQuestions: number;
   currentSubtest: QuestionSubtest;
   remainingSeconds: number;
   onOpenDrawer: () => void;
@@ -21,6 +23,8 @@ const SUBTEST_SHORT: Record<QuestionSubtest, string> = {
 
 export function ExamHeader({
   packageTitle,
+  currentNumber,
+  totalQuestions,
   currentSubtest,
   remainingSeconds,
   onOpenDrawer,
@@ -29,8 +33,51 @@ export function ExamHeader({
   const isCritical = remainingSeconds <= 300;
 
   return (
-    <header className="sticky top-0 z-30 border-b-[1.5px] border-ink bg-card">
-      <div className="mx-auto flex w-full max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 shrink-0 border-b-[1.5px] border-ink bg-card">
+      {/* Mobile Compact 1-Row Header (60px — acuan FigCraft Mobile 390x844) */}
+      <div className="flex h-[58px] w-full items-center justify-between gap-2 px-3 md:hidden">
+        <div className="min-w-0">
+          <p className="font-mono text-xs font-bold tabular-nums text-ink">
+            No. {currentNumber}/{totalQuestions}
+          </p>
+          <p className="font-mono text-[11px] font-bold text-accent-dark">
+            {SUBTEST_SHORT[currentSubtest]}
+          </p>
+        </div>
+
+        <div
+          aria-live="polite"
+          className={`flex min-h-[36px] shrink-0 items-center rounded-[10px] border-[1.5px] px-2.5 py-1 ${
+            isCritical
+              ? "border-danger-border bg-danger-bg text-danger-text"
+              : "border-ink bg-pill text-ink"
+          }`}
+        >
+          <span className="font-mono text-sm font-bold tabular-nums">
+            {formatCountdown(remainingSeconds)}
+          </span>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Button
+            variant="outline"
+            onClick={onOpenDrawer}
+            className="min-h-[40px] px-2.5 py-1 text-xs"
+          >
+            Daftar Soal
+          </Button>
+          <Button
+            variant="danger"
+            onClick={onRequestFinish}
+            className="min-h-[40px] px-2.5 py-1 text-xs"
+          >
+            Selesai
+          </Button>
+        </div>
+      </div>
+
+      {/* Tablet & Desktop Spacious Header */}
+      <div className="mx-auto hidden w-full max-w-[1440px] flex-wrap items-center justify-between gap-3 px-6 py-3 md:flex lg:px-8">
         {/* Brand & Info Paket */}
         <div className="flex min-w-0 items-center gap-3">
           <span className="inline-flex shrink-0 items-center gap-1.5 font-display text-lg font-extrabold tracking-tight text-ink">
@@ -44,7 +91,7 @@ export function ExamHeader({
             />
             <span>simcat</span>
           </span>
-          <span className="hidden h-5 w-px bg-border-subtle sm:inline-block" aria-hidden="true" />
+          <span className="h-5 w-px bg-border-subtle" aria-hidden="true" />
           <div className="min-w-0">
             <p className="truncate text-sm font-bold text-ink">{packageTitle}</p>
             <p className="truncate text-xs text-ink-secondary">
@@ -54,7 +101,7 @@ export function ExamHeader({
         </div>
 
         {/* Timer + Aksi */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-3">
           <div
             aria-live="polite"
             className={`flex min-h-[44px] items-center gap-2.5 rounded-[12px] border-[1.5px] px-3.5 py-1.5 ${
@@ -63,10 +110,10 @@ export function ExamHeader({
                 : "border-ink bg-pill text-ink"
             }`}
           >
-            <span className="hidden text-[11px] font-semibold uppercase tracking-wider text-ink-secondary sm:inline">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-secondary">
               Sisa Waktu
             </span>
-            <span className="font-mono text-base font-bold tabular-nums sm:text-lg">
+            <span className="font-mono text-lg font-bold tabular-nums">
               {formatCountdown(remainingSeconds)}
             </span>
           </div>
@@ -82,7 +129,7 @@ export function ExamHeader({
           <Button
             variant="danger"
             onClick={onRequestFinish}
-            className="px-3.5 sm:px-4"
+            className="px-4"
           >
             Selesai Ujian
           </Button>

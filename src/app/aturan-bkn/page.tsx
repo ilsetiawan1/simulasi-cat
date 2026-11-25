@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   Footer,
   Navbar,
+  PageReveal,
   SelectionHighlight,
   TactileCard,
   buttonClasses,
@@ -60,20 +61,21 @@ export default function AturanBknPage() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
-        <section className="mx-auto max-w-[1280px] px-4 pt-8 pb-16 sm:px-8 lg:px-12 lg:pt-12">
-          <h1 className="font-mono text-2xl leading-snug tracking-[-0.02em] text-ink sm:text-3xl lg:text-4xl">
-            Aturan &amp;{" "}
-            <SelectionHighlight showHandles={false}>Passing Grade</SelectionHighlight>{" "}
-            CAT BKN
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm text-ink-secondary">
-            Acuan resmi KepmenPANRB No. 321 Tahun 2024 yang diterapkan pada seluruh
-            simulasi SKD ({SKD_TOTAL_QUESTIONS} soal, {SKD_DEFAULT_DURATION_MINUTES} menit)
-            dan SKB di simcat.
-          </p>
+        <PageReveal className="mx-auto max-w-[1280px] px-4 pt-8 pb-16 sm:px-8 lg:px-12 lg:pt-12">
+          <div data-reveal>
+            <h1 className="font-mono text-2xl leading-snug tracking-[-0.02em] text-ink sm:text-3xl lg:text-4xl">
+              Aturan &amp; <SelectionHighlight>Passing Grade</SelectionHighlight> CAT BKN
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm text-ink-secondary">
+              Acuan resmi KepmenPANRB No. 321 Tahun 2024 yang diterapkan pada seluruh
+              simulasi SKD ({SKD_TOTAL_QUESTIONS} soal, {SKD_DEFAULT_DURATION_MINUTES} menit)
+              dan SKB di simcat.
+            </p>
+          </div>
 
           {/* Passing Grade Table — Desktop & Tablet */}
-          <TactileCard className="mt-8 hidden overflow-hidden md:block">
+          <div data-reveal>
+            <TactileCard className="mt-8 hidden overflow-hidden md:block">
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-border-subtle bg-pill font-mono text-xs font-bold text-ink">
@@ -154,9 +156,10 @@ export default function AturanBknPage() {
               </div>
             </div>
           </TactileCard>
+          </div>
 
           {/* Two Rule Cards */}
-          <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div data-reveal className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
             <TactileCard className="p-6">
               <p className="font-mono text-xs font-bold text-accent">
                 ATURAN TIE-BREAKER PERINGKAT
@@ -189,7 +192,10 @@ export default function AturanBknPage() {
           </div>
 
           {/* Bottom CTA Banner */}
-          <div className="mt-8 flex flex-col items-start justify-between gap-4 rounded-[22px] border-[1.5px] border-ink bg-pill p-6 sm:flex-row sm:items-center sm:px-8">
+          <div
+            data-reveal
+            className="mt-8 flex flex-col items-start justify-between gap-4 rounded-[22px] border-[1.5px] border-ink bg-pill p-6 sm:flex-row sm:items-center sm:px-8"
+          >
             <p className="font-mono text-lg text-ink sm:text-xl">
               Siap menguji target passing grade kamu?
             </p>
@@ -200,7 +206,7 @@ export default function AturanBknPage() {
               Mulai Simulasi SKD →
             </Link>
           </div>
-        </section>
+        </PageReveal>
       </main>
       <Footer />
     </div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 import { z } from "zod";
-import { Button, SelectionHighlight, TactileCard } from "@/components/ui";
+import { Button, PageReveal, SelectionHighlight, TactileCard } from "@/components/ui";
 import { loadPendingGuestResult } from "@/lib/storage/exam-storage";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { sanitizeRedirectPath } from "@/lib/supabase/redirect";
@@ -216,7 +216,9 @@ export function AuthForm({ mode }: AuthFormProps) {
 
       {/* Main Card */}
       <main className="mx-auto flex w-full max-w-[480px] flex-1 flex-col justify-center px-4 py-6 sm:py-10">
-        <TactileCard className="p-6 sm:p-8">
+        <PageReveal>
+          <div data-reveal>
+            <TactileCard className="p-6 sm:p-8">
           <h1 className="font-display text-2xl font-bold tracking-tight text-ink sm:text-[28px]">
             {isLogin ? "Masuk ke " : "Buat Akun "}
             <SelectionHighlight>simcat</SelectionHighlight>
@@ -374,6 +376,8 @@ export function AuthForm({ mode }: AuthFormProps) {
             </Link>
           </div>
         </TactileCard>
+          </div>
+        </PageReveal>
       </main>
     </div>
   );

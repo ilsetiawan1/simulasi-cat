@@ -16,7 +16,7 @@ interface SelectionHighlightProps {
 export function SelectionHighlight({
   children,
   showHandles = true,
-  animate = false,
+  animate = true,
   className = "",
 }: SelectionHighlightProps) {
   const rootRef = useRef<HTMLSpanElement | null>(null);

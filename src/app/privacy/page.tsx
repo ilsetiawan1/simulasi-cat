@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Footer, Navbar, SelectionHighlight, TactileCard } from "@/components/ui";
+import { Footer, Navbar, PageReveal, SelectionHighlight, TactileCard } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Kebijakan Privasi",
@@ -43,19 +43,22 @@ export default function PrivacyPage() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">
-        <section className="mx-auto max-w-4xl px-4 pt-8 pb-16 sm:px-8 lg:pt-12">
-          <p className="font-mono text-xs font-bold tracking-wider text-accent">
-            LEGAL &bull; SIMCAT
-          </p>
-          <h1 className="mt-2 font-mono text-2xl leading-snug tracking-[-0.02em] text-ink sm:text-3xl lg:text-4xl">
-            Kebijakan <SelectionHighlight showHandles={false}>Privasi</SelectionHighlight>
-          </h1>
-          <p className="mt-3 text-sm text-ink-secondary">
-            Terakhir diperbarui: November 2026 &bull; Berlaku untuk seluruh layanan{" "}
-            <strong className="font-semibold text-ink">simcat</strong> (simulasicat.my.id).
-          </p>
+        <PageReveal className="mx-auto max-w-4xl px-4 pt-8 pb-16 sm:px-8 lg:pt-12">
+          <div data-reveal>
+            <p className="font-mono text-xs font-bold tracking-wider text-accent">
+              LEGAL &bull; SIMCAT
+            </p>
+            <h1 className="mt-2 font-mono text-2xl leading-snug tracking-[-0.02em] text-ink sm:text-3xl lg:text-4xl">
+              Kebijakan <SelectionHighlight>Privasi</SelectionHighlight>
+            </h1>
+            <p className="mt-3 text-sm text-ink-secondary">
+              Terakhir diperbarui: November 2026 &bull; Berlaku untuk seluruh layanan{" "}
+              <strong className="font-semibold text-ink">simcat</strong> (simulasicat.my.id).
+            </p>
+          </div>
 
-          <TactileCard className="mt-8 divide-y divide-border-subtle">
+          <div data-reveal>
+            <TactileCard className="mt-8 divide-y divide-border-subtle">
             {SECTIONS.map((section) => (
               <div key={section.title} className="p-6 sm:p-8">
                 <h2 className="text-lg font-semibold text-ink">{section.title}</h2>
@@ -86,7 +89,8 @@ export default function PrivacyPage() {
               </p>
             </div>
           </TactileCard>
-        </section>
+          </div>
+        </PageReveal>
       </main>
       <Footer />
     </div>

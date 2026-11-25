@@ -106,14 +106,24 @@ export async function getMyScoreHistory(
 
 export async function getPackageLeaderboard(
   packageId: string,
-  limit = 50,
+  limit = 100,
   client?: SupabaseClient,
 ): Promise<LeaderboardEntry[]> {
   const supabase = client ?? (await createSupabaseServerClient());
   await getActivePackageById(packageId, supabase);
 
   const rows = await findLeaderboardByPackageId(supabase, packageId, limit);
-  return rows.map((row, index) => ({
+
+  // 1 peserta = 1 baris (skor terbaik). Karena query sudah terurut tie-breaker BKN,
+  // kemunculan pertama per user_id adalah skor terbaiknya pada paket ini.
+  const seenUserIds = new Set<string>();
+  const bestRows = rows.filter((row) => {
+    if (seenUserIds.has(row.user_id)) return false;
+    seenUserIds.add(row.user_id);
+    return true;
+  });
+
+  return bestRows.slice(0, limit).map((row, index) => ({
     rank: index + 1,
     scoreId: row.id,
     userId: row.user_id,

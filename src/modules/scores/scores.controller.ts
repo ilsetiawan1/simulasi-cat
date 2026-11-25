@@ -17,7 +17,7 @@ const submitScoreBodySchema = z.object({
 
 const leaderboardQuerySchema = z.object({
   packageId: z.string().uuid("packageId harus berupa UUID valid."),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
+  limit: z.coerce.number().int().min(1).max(100).default(100),
 });
 
 const myHistoryQuerySchema = z.object({

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { AppError } from "@/utils/http-response";
-import { submitExamScore } from "../scores.service";
+import { getPackageLeaderboard, submitExamScore } from "../scores.service";
 
 const USER_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const PKG_ID = "11111111-1111-4111-8111-111111111102";
@@ -211,5 +211,124 @@ describe("scores.service", () => {
     expect(res.created).toBe(false);
     expect(res.score.id).toBe(existing.id);
     expect(insertedPayloads.length).toBe(0);
+  });
+
+  test("leaderboard hanya menampilkan 1 skor terbaik per user dengan urutan rank berurutan", async () => {
+    const leaderboardRows = [
+      {
+        id: "score-1",
+        user_id: "user-a",
+        package_id: PKG_ID,
+        client_attempt_id: "att-1",
+        score_twk: 100,
+        score_tiu: 120,
+        score_tkp: 190,
+        score_skb: 0,
+        total_score: 410,
+        is_passed: true,
+        duration_seconds: 3000,
+        completed_at: "2026-01-01T01:00:00Z",
+        profiles: { display_name: "Peserta A", avatar_url: null },
+      },
+      {
+        id: "score-2",
+        user_id: "user-a",
+        package_id: PKG_ID,
+        client_attempt_id: "att-2",
+        score_twk: 80,
+        score_tiu: 100,
+        score_tkp: 170,
+        score_skb: 0,
+        total_score: 350,
+        is_passed: true,
+        duration_seconds: 3200,
+        completed_at: "2026-01-01T02:00:00Z",
+        profiles: { display_name: "Peserta A", avatar_url: null },
+      },
+      {
+        id: "score-3",
+        user_id: "user-b",
+        package_id: PKG_ID,
+        client_attempt_id: "att-3",
+        score_twk: 75,
+        score_tiu: 95,
+        score_tkp: 175,
+        score_skb: 0,
+        total_score: 345,
+        is_passed: true,
+        duration_seconds: 3100,
+        completed_at: "2026-01-01T03:00:00Z",
+        profiles: { display_name: "Peserta B", avatar_url: null },
+      },
+    ];
+
+    const chain = {
+      order() {
+        return chain;
+      },
+      async limit() {
+        return { data: leaderboardRows, error: null };
+      },
+    };
+
+    const mockClient = {
+      from(table: string) {
+        if (table === "exam_packages") {
+          return {
+            select() {
+              return {
+                eq() {
+                  return {
+                    eq() {
+                      return {
+                        async maybeSingle() {
+                          return {
+                            data: {
+                              id: PKG_ID,
+                              slug: "skd-penuh-01",
+                              title: "Tryout SKD CPNS",
+                              description: "",
+                              category: "SKD_FULL",
+                              duration_minutes: 100,
+                              total_questions: 110,
+                              passing_grade_twk: 65,
+                              passing_grade_tiu: 80,
+                              passing_grade_tkp: 166,
+                              is_active: true,
+                              created_at: "2026-01-01T00:00:00Z",
+                            },
+                            error: null,
+                          };
+                        },
+                      };
+                    },
+                  };
+                },
+              };
+            },
+          };
+        }
+        if (table === "scores") {
+          return {
+            select() {
+              return {
+                eq() {
+                  return chain;
+                },
+              };
+            },
+          };
+        }
+        throw new Error(`Unexpected table: ${table}`);
+      },
+    } as unknown as SupabaseClient;
+
+    const entries = await getPackageLeaderboard(PKG_ID, 100, mockClient);
+    expect(entries.length).toBe(2);
+    expect(entries[0]?.userId).toBe("user-a");
+    expect(entries[0]?.totalScore).toBe(410);
+    expect(entries[0]?.rank).toBe(1);
+    expect(entries[1]?.userId).toBe("user-b");
+    expect(entries[1]?.rank).toBe(2);
   });
 });
