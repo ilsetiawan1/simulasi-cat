@@ -100,29 +100,51 @@ function createMockSupabase(options: {
       }
 
       if (table === "questions") {
+        const questionRows = [
+          {
+            id: Q_ID,
+            package_id: "11111111-1111-4111-8111-111111111101",
+            subtest: "TWK",
+            question_text: "Soal TWK (shared bank)",
+            image_url: null,
+            options: [
+              { id: "opt_1", text: "Benar", score: 5 },
+              { id: "opt_2", text: "Salah", score: 0 },
+            ],
+            shuffle_options: true,
+            explanation: "Pembahasan",
+            created_at: "2026-01-01T00:00:00Z",
+          },
+          {
+            id: "22222222-2222-4222-8222-222222222202",
+            package_id: "11111111-1111-4111-8111-111111111101",
+            subtest: "TWK",
+            question_text: "Soal TWK #2 (melebihi kuota mini total_questions=1)",
+            image_url: null,
+            options: [
+              { id: "opt_1", text: "Benar", score: 5 },
+              { id: "opt_2", text: "Salah", score: 0 },
+            ],
+            shuffle_options: true,
+            explanation: "Pembahasan",
+            created_at: "2026-01-01T00:00:00Z",
+          },
+        ];
+
         return {
           select() {
             return {
+              async in(_col: string, ids: string[]) {
+                return {
+                  data: questionRows.filter((row) => ids.includes(row.id)),
+                  error: null,
+                };
+              },
               eq() {
                 return {
                   async order() {
                     return {
-                      data: [
-                        {
-                          id: Q_ID,
-                          package_id: PKG_ID,
-                          subtest: "TWK",
-                          question_text: "Soal TWK",
-                          image_url: null,
-                          options: [
-                            { id: "opt_1", text: "Benar", score: 5 },
-                            { id: "opt_2", text: "Salah", score: 0 },
-                          ],
-                          shuffle_options: true,
-                          explanation: "Pembahasan",
-                          created_at: "2026-01-01T00:00:00Z",
-                        },
-                      ],
+                      data: questionRows.slice(0, 1),
                       error: null,
                     };
                   },
@@ -210,6 +232,27 @@ describe("scores.service", () => {
 
     expect(res.created).toBe(false);
     expect(res.score.id).toBe(existing.id);
+    expect(insertedPayloads.length).toBe(0);
+  });
+
+  test("menolak submit skor bila jumlah jawaban sah melebihi kuota soal paket (anti-inflasi)", async () => {
+    const { client, insertedPayloads } = createMockSupabase({ authenticated: true });
+
+    await expect(
+      submitExamScore(
+        {
+          packageId: PKG_ID,
+          clientAttemptId: ATTEMPT_ID,
+          answers: {
+            [Q_ID]: "opt_1",
+            "22222222-2222-4222-8222-222222222202": "opt_1",
+          },
+          durationSeconds: 45,
+        },
+        client,
+      ),
+    ).rejects.toBeInstanceOf(AppError);
+
     expect(insertedPayloads.length).toBe(0);
   });
 

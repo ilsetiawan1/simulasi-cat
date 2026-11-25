@@ -11,6 +11,8 @@ export async function handleGetPackageQuestions(rawSlug: string) {
   return handleApiError(async () => {
     const { slug } = slugParamSchema.parse({ slug: rawSlug });
     const payload = await getQuestionsByPackageSlug(slug);
-    return jsonOk(payload);
+    const response = jsonOk(payload);
+    response.headers.set("Cache-Control", "no-store");
+    return response;
   });
 }

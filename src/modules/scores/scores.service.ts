@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { ScoreRow } from "@/lib/supabase/types";
 import { requireAuthUser } from "@/middlewares/auth-guard";
 import { getActivePackageById } from "@/modules/packages/packages.service";
-import { getQuestionsByPackageId } from "@/modules/questions/questions.service";
+import { getQuestionsForScoring } from "@/modules/questions/questions.service";
 import {
   findLeaderboardByPackageId,
   findScoreByAttempt,
@@ -66,7 +66,11 @@ export async function submitExamScore(
     return { score: existing, created: false };
   }
 
-  const { package: pkg, questions } = await getQuestionsByPackageId(input.packageId, supabase);
+  const { package: pkg, questions } = await getQuestionsForScoring(
+    input.packageId,
+    Object.keys(input.answers),
+    supabase,
+  );
   const computed = calculateExamScore(pkg, questions, input.answers);
 
   try {
