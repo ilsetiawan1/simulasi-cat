@@ -125,6 +125,11 @@ export function LeaderboardView() {
   }, []);
 
   useEffect(() => {
+    if (activeTab === "SKB") {
+      setEntries([]);
+      setLoadingBoard(false);
+      return;
+    }
     if (selectedPackage?.id) {
       if (selectedPackage.id !== selectedPackageId) {
         setSelectedPackageId(selectedPackage.id);
@@ -133,7 +138,7 @@ export function LeaderboardView() {
     } else if (!loadingPackages) {
       setEntries([]);
     }
-  }, [selectedPackage?.id, selectedPackageId, loadingPackages]);
+  }, [activeTab, selectedPackage?.id, selectedPackageId, loadingPackages]);
 
   function handleSelectTab(nextTab: LeaderboardTab) {
     setActiveTab(nextTab);
@@ -144,14 +149,15 @@ export function LeaderboardView() {
   const isSkb = activeTab === "SKB";
 
   return (
-    <PageReveal className="mx-auto max-w-[1280px] px-4 pt-8 pb-16 sm:px-8 lg:px-12 lg:pt-12">
+    <PageReveal className="mx-auto max-w-7xl px-4 pt-8 pb-16 sm:px-8 lg:px-12 lg:pt-12">
       <div data-reveal>
         <h1 className="font-mono text-2xl tracking-[-0.02em] text-ink sm:text-3xl lg:text-4xl">
           Papan <SelectionHighlight>Peringkat</SelectionHighlight>
         </h1>
-        <p className="mt-3 text-sm text-ink-secondary">
-          Top 100 peserta (skor terbaik per akun) &bull; Tie-breaker BKN: Total Skor
-          &rarr; TKP &rarr; TIU &rarr; TWK &rarr; Waktu Tercepat.
+        <p className="mt-2.5 max-w-2xl text-xs leading-relaxed text-ink-secondary sm:mt-3 sm:text-sm">
+          Menampilkan 100 peserta terbaik berdasarkan skor tertinggi per akun. Urutan seri
+          mengikuti standar BKN dari Total Skor, TKP, TIU, TWK, hingga waktu pengerjaan
+          tercepat.
         </p>
       </div>
 
@@ -174,7 +180,7 @@ export function LeaderboardView() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => handleSelectTab(tab.value)}
-                className={`min-h-[44px] rounded-[10px] px-5 text-xs font-semibold transition-colors ${
+                className={`min-h-11 rounded-[10px] px-5 text-xs font-semibold transition-colors ${
                   active
                     ? "border-[1.5px] border-ink bg-accent-highlight text-ink"
                     : "border border-border-subtle bg-pill text-ink-secondary hover:text-ink"
@@ -196,7 +202,7 @@ export function LeaderboardView() {
                   key={pkg.id}
                   type="button"
                   onClick={() => setSelectedPackageId(pkg.id)}
-                  className={`min-h-[40px] rounded-full px-3.5 text-xs font-semibold transition-colors ${
+                  className={`min-h-10 rounded-full px-3.5 text-xs font-semibold transition-colors ${
                     active
                       ? "border-[1.5px] border-ink bg-card text-ink"
                       : "border border-border-subtle bg-pill text-ink-secondary hover:text-ink"
@@ -211,7 +217,7 @@ export function LeaderboardView() {
 
         {/* Jika >= 5 paket/formasi dalam kategori: tampilkan dropdown terfilter */}
         {categoryPackages.length >= 5 && (
-          <div className="w-full sm:w-[280px]">
+          <div className="w-full sm:w-70">
             <label htmlFor="leaderboard-package-select" className="sr-only">
               Pilih Formasi atau Paket
             </label>
@@ -220,7 +226,7 @@ export function LeaderboardView() {
               value={selectedPackage?.id ?? ""}
               disabled={loadingPackages}
               onChange={(e) => setSelectedPackageId(e.target.value)}
-              className="min-h-[44px] w-full rounded-xl border-[1.5px] border-ink bg-card px-3.5 text-sm font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
+              className="min-h-11 w-full rounded-xl border-[1.5px] border-ink bg-card px-3.5 text-sm font-semibold text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
             >
               {categoryPackages.map((pkg) => (
                 <option key={pkg.id} value={pkg.id}>
@@ -232,8 +238,23 @@ export function LeaderboardView() {
         )}
       </div>
 
+      {/* SKB Coming Soon State */}
+      {isSkb && (
+        <div data-reveal className="mt-6">
+          <EmptyState
+            title="Papan Peringkat SKB — Segera Hadir"
+            description="Simulasi dan peringkat Seleksi Kompetensi Bidang (SKB) sedang kami siapkan. Untuk saat ini, kamu bisa berkompetisi di Papan Peringkat SKD Penuh."
+            action={
+              <Button onClick={() => handleSelectTab("SKD_FULL")}>
+                Lihat Peringkat SKD Penuh
+              </Button>
+            }
+          />
+        </div>
+      )}
+
       {/* Loading State */}
-      {(loadingPackages || loadingBoard) && (
+      {!isSkb && (loadingPackages || loadingBoard) && (
         <div data-reveal>
           <TactileCard className="mt-6 p-6" shadow="sm">
             <div className="space-y-3" aria-live="polite">
@@ -246,7 +267,7 @@ export function LeaderboardView() {
       )}
 
       {/* Error State */}
-      {!loadingPackages && !loadingBoard && error && (
+      {!isSkb && !loadingPackages && !loadingBoard && error && (
         <div data-reveal className="mt-6">
           <EmptyState
             tone="error"
@@ -268,7 +289,7 @@ export function LeaderboardView() {
       )}
 
       {/* Empty State */}
-      {!loadingPackages && !loadingBoard && !error && entries.length === 0 && (
+      {!isSkb && !loadingPackages && !loadingBoard && !error && entries.length === 0 && (
         <div data-reveal className="mt-6">
           <EmptyState
             title="Belum ada skor tercatat untuk tryout ini"
@@ -288,7 +309,7 @@ export function LeaderboardView() {
       )}
 
       {/* Data Views */}
-      {!loadingPackages && !loadingBoard && !error && entries.length > 0 && (
+      {!isSkb && !loadingPackages && !loadingBoard && !error && entries.length > 0 && (
         <div data-reveal>
           {/* Mobile Cards (zero horizontal overflow) */}
           <div className="mt-6 space-y-4 md:hidden">

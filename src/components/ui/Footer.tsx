@@ -79,9 +79,12 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-border-subtle pt-6 text-xs text-ink-muted sm:flex-row sm:items-center">
-          <span>simulasi-cat &bull; Gratis 100% tanpa biaya langganan</span>
-          <div className="flex flex-wrap items-center gap-4">
+        <div className="mt-10 flex flex-col gap-3 border-t border-border-subtle pt-6 text-xs text-ink-muted sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-start sm:gap-4">
+            <span className="font-medium text-ink-secondary">simulasi-cat</span>
+            <span>Gratis 100% tanpa biaya langganan</span>
+          </div>
+          <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:justify-end">
             <Link href="/privacy" className="hover:text-ink">
               Kebijakan Privasi
             </Link>
