@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Footer, Navbar } from "@/components/ui";
+import { Footer, Navbar, PageReveal } from "@/components/ui";
 import { HistoryView } from "@/features/exam-result";
 
 export const metadata: Metadata = {
@@ -14,7 +14,11 @@ export default function HistoryPage() {
     <div className="flex min-h-screen flex-col bg-paper text-ink">
       <Navbar />
       <div className="flex-1">
-        <HistoryView />
+        <PageReveal>
+          <div data-reveal>
+            <HistoryView />
+          </div>
+        </PageReveal>
       </div>
       <Footer />
     </div>
