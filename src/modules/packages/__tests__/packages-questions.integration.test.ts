@@ -23,7 +23,11 @@ describe("Supabase integration (packages, questions, leaderboard)", () => {
     const payload = await getQuestionsByPackageSlug("skd-penuh-01", client);
     expect(payload.package.id).toBe(skd!.id);
     expect(payload.questions.length).toBeGreaterThanOrEqual(9);
-    expect(payload.questions.some((q) => q.shuffle_options === false)).toBe(true);
+    expect(
+      payload.questions.every(
+        (q) => typeof q.shuffle_options === "boolean" && q.options.length >= 2,
+      ),
+    ).toBe(true);
 
     const leaderboard = await getPackageLeaderboard(skd!.id, 20, client);
     expect(Array.isArray(leaderboard)).toBe(true);
