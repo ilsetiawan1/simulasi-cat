@@ -6,7 +6,9 @@ import { buildExamSessionOrder } from "@/lib/exam-engine/shuffle";
 import {
   clearExamSession,
   loadExamSession,
+  loadExamSessionPayload,
   saveExamSession,
+  saveExamSessionPayload,
   savePendingGuestResult,
   type ExamSessionState,
 } from "@/lib/storage/exam-storage";
@@ -58,6 +60,7 @@ export function useCatExam({ slug, shortcutsDisabled }: UseCatExamOptions) {
   const hasSubmittedRef = useRef(false);
   const sessionRef = useRef<ExamSessionState | null>(null);
   const pkgRef = useRef<ExamPackageRow | null>(null);
+  const questionsRef = useRef<QuestionRow[]>([]);
 
   useEffect(() => {
     sessionRef.current = session;
@@ -105,6 +108,8 @@ export function useCatExam({ slug, shortcutsDisabled }: UseCatExamOptions) {
         durationSeconds,
         completedAt,
         savedToServer: false,
+        package: activePkg,
+        questions: questionsRef.current,
       });
 
       clearExamSession(activePkg.slug);
@@ -113,7 +118,8 @@ export function useCatExam({ slug, shortcutsDisabled }: UseCatExamOptions) {
     [router],
   );
 
-  // 1x fetch soal + pulihkan atau buat snapshot localStorage
+  // Pulihkan sesi & snapshot soal dari localStorage bila masih aktif (anti-reset saat refresh),
+  // atau 1x fetch undian soal baru dari server bila memulai sesi baru.
   useEffect(() => {
     let active = true;
 
@@ -122,35 +128,52 @@ export function useCatExam({ slug, shortcutsDisabled }: UseCatExamOptions) {
       setError(null);
 
       try {
-        const data = await fetchPackageQuestions(slug);
-        if (!active) return;
+        const saved = loadExamSession(slug);
+        const savedPayload = loadExamSessionPayload(slug);
 
-        if (data.questions.length === 0) {
-          setError("Belum ada soal yang tersedia untuk paket ini.");
-          setLoading(false);
-          return;
-        }
-
-        const qMap: Record<string, QuestionRow> = {};
-        for (const q of data.questions) {
-          qMap[q.id] = q;
-        }
-
-        const saved = loadExamSession(data.package.slug);
-        const isSavedValid =
-          saved !== null &&
-          saved.packageId === data.package.id &&
-          saved.questionOrder.length === data.questions.length &&
-          saved.questionOrder.every((id) => qMap[id] !== undefined);
-
+        let resolvedPkg: ExamPackageRow;
+        let resolvedQuestions: QuestionRow[];
+        let qMap: Record<string, QuestionRow> = {};
         let activeSession: ExamSessionState;
 
-        if (isSavedValid && saved) {
+        const canRestoreSnapshot = (() => {
+          if (!saved || !savedPayload) return false;
+          if (saved.packageId !== savedPayload.package.id) return false;
+          if (savedPayload.questions.length === 0) return false;
+          if (saved.questionOrder.length !== savedPayload.questions.length) return false;
+          const map: Record<string, QuestionRow> = {};
+          for (const q of savedPayload.questions) {
+            map[q.id] = q;
+          }
+          if (!saved.questionOrder.every((id) => map[id] !== undefined)) return false;
+          qMap = map;
+          return true;
+        })();
+
+        if (canRestoreSnapshot && saved && savedPayload) {
+          resolvedPkg = savedPayload.package;
+          resolvedQuestions = savedPayload.questions;
           activeSession = {
             ...saved,
             currentIndex: Math.min(saved.currentIndex, saved.questionOrder.length - 1),
           };
         } else {
+          const data = await fetchPackageQuestions(slug);
+          if (!active) return;
+
+          if (data.questions.length === 0) {
+            setError("Belum ada soal yang tersedia untuk paket ini.");
+            setLoading(false);
+            return;
+          }
+
+          resolvedPkg = data.package;
+          resolvedQuestions = data.questions;
+          qMap = {};
+          for (const q of data.questions) {
+            qMap[q.id] = q;
+          }
+
           const { questionOrder, optionOrders } = buildExamSessionOrder(
             data.questions,
             data.package.category,
@@ -172,13 +195,21 @@ export function useCatExam({ slug, shortcutsDisabled }: UseCatExamOptions) {
             flaggedIds: [],
           };
           saveExamSession(activeSession);
+          saveExamSessionPayload(data.package.slug, {
+            version: 1,
+            package: data.package,
+            questions: data.questions,
+          });
         }
 
-        setPkg(data.package);
+        if (!active) return;
+
+        setPkg(resolvedPkg);
         setQuestionsById(qMap);
         setSession(activeSession);
         sessionRef.current = activeSession;
-        pkgRef.current = data.package;
+        pkgRef.current = resolvedPkg;
+        questionsRef.current = resolvedQuestions;
 
         const initialRemaining = Math.max(
           0,

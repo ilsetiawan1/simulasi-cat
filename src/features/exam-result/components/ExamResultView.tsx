@@ -73,52 +73,77 @@ export function ExamResultView({ slug }: ExamResultViewProps) {
       setError(null);
 
       try {
-        const data = await fetchPackageQuestions(slug);
-        if (!active) return;
-
         const pending = loadPendingGuestResult();
-        const cached = loadLastExamResult(data.package.slug);
+        const cached = loadLastExamResult(slug);
 
+        const hasPreservedSnapshot =
+          cached !== null &&
+          cached.packageSlug === slug &&
+          cached.package !== undefined &&
+          Array.isArray(cached.questions) &&
+          cached.questions.length > 0 &&
+          (!pending ||
+            pending.packageSlug !== slug ||
+            pending.clientAttemptId === cached.clientAttemptId);
+
+        let resolvedPkg: ExamPackageRow;
+        let resolvedQuestions: QuestionRow[];
         let resolvedAttempt: LastExamResultCache | null = null;
 
-        if (pending && pending.packageSlug === data.package.slug) {
-          const fallbackQuestionOrder = data.questions.map((q) => q.id);
-          const fallbackOptionOrders: Record<string, string[]> = {};
-          for (const q of data.questions) {
-            fallbackOptionOrders[q.id] = q.options.map((o) => o.id);
-          }
-
-          resolvedAttempt = {
-            version: 1,
-            clientAttemptId: pending.clientAttemptId,
-            packageId: pending.packageId,
-            packageSlug: pending.packageSlug,
-            answers: pending.answers,
-            questionOrder:
-              cached && cached.clientAttemptId === pending.clientAttemptId
-                ? cached.questionOrder
-                : fallbackQuestionOrder,
-            optionOrders:
-              cached && cached.clientAttemptId === pending.clientAttemptId
-                ? cached.optionOrders
-                : fallbackOptionOrders,
-            durationSeconds: Math.min(
-              Math.max(1, pending.durationSeconds),
-              Math.max(1, data.package.duration_minutes * 60),
-            ),
-            completedAt: pending.completedAt,
-            savedToServer:
-              cached && cached.clientAttemptId === pending.clientAttemptId
-                ? cached.savedToServer
-                : false,
-          };
-          saveLastExamResult(resolvedAttempt);
-        } else if (cached && cached.packageSlug === data.package.slug) {
+        if (hasPreservedSnapshot && cached?.package && cached.questions) {
+          resolvedPkg = cached.package;
+          resolvedQuestions = cached.questions;
           resolvedAttempt = cached;
+        } else {
+          const data = await fetchPackageQuestions(slug);
+          if (!active) return;
+
+          resolvedPkg = data.package;
+          resolvedQuestions = data.questions;
+
+          if (pending && pending.packageSlug === data.package.slug) {
+            const fallbackQuestionOrder = data.questions.map((q) => q.id);
+            const fallbackOptionOrders: Record<string, string[]> = {};
+            for (const q of data.questions) {
+              fallbackOptionOrders[q.id] = q.options.map((o) => o.id);
+            }
+
+            resolvedAttempt = {
+              version: 1,
+              clientAttemptId: pending.clientAttemptId,
+              packageId: pending.packageId,
+              packageSlug: pending.packageSlug,
+              answers: pending.answers,
+              questionOrder:
+                cached && cached.clientAttemptId === pending.clientAttemptId
+                  ? cached.questionOrder
+                  : fallbackQuestionOrder,
+              optionOrders:
+                cached && cached.clientAttemptId === pending.clientAttemptId
+                  ? cached.optionOrders
+                  : fallbackOptionOrders,
+              durationSeconds: Math.min(
+                Math.max(1, pending.durationSeconds),
+                Math.max(1, data.package.duration_minutes * 60),
+              ),
+              completedAt: pending.completedAt,
+              savedToServer:
+                cached && cached.clientAttemptId === pending.clientAttemptId
+                  ? cached.savedToServer
+                  : false,
+              package: data.package,
+              questions: data.questions,
+            };
+            saveLastExamResult(resolvedAttempt);
+          } else if (cached && cached.packageSlug === data.package.slug) {
+            resolvedAttempt = cached;
+          }
         }
 
-        setPkg(data.package);
-        setQuestions(data.questions);
+        if (!active) return;
+
+        setPkg(resolvedPkg);
+        setQuestions(resolvedQuestions);
         setAttempt(resolvedAttempt);
         if (resolvedAttempt?.savedToServer) {
           setSaveState("saved");

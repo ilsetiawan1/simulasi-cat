@@ -1,10 +1,16 @@
 import { describe, expect, test } from "bun:test";
 import {
+  loadLastExamResult,
+  saveLastExamResult,
+} from "@/features/cat-exam/utils/result-cache";
+import {
   clearExamSession,
   clearPendingGuestResult,
   loadExamSession,
+  loadExamSessionPayload,
   loadPendingGuestResult,
   saveExamSession,
+  saveExamSessionPayload,
   savePendingGuestResult,
 } from "../exam-storage";
 
@@ -77,5 +83,67 @@ describe("exam-storage (Zod localStorage persistence)", () => {
     expect(loadPendingGuestResult(storage)?.packageSlug).toBe("skd-penuh-01");
     clearPendingGuestResult(storage);
     expect(loadPendingGuestResult(storage)).toBeNull();
+  });
+
+  test("menyimpan & membersihkan snapshot soal sesi aktif dan hasil akhir agar tidak hilang saat refresh/result", () => {
+    const storage = createMemoryStorage();
+    const pkg = {
+      id: "11111111-1111-4111-8111-111111111101",
+      slug: "skd-penuh-01",
+      title: "Tryout SKD CPNS",
+      description: "Simulasi SKD",
+      category: "SKD_FULL" as const,
+      duration_minutes: 100,
+      total_questions: 110,
+      passing_grade_twk: 65,
+      passing_grade_tiu: 80,
+      passing_grade_tkp: 166,
+      is_active: true,
+      created_at: "2026-01-01T00:00:00.000Z",
+    };
+    const q1 = {
+      id: "22222222-2222-4222-8222-222222222101",
+      package_id: pkg.id,
+      subtest: "TWK" as const,
+      question_text: "Soal TWK contoh",
+      image_url: null,
+      options: [
+        { id: "opt_1", text: "Benar", score: 5 },
+        { id: "opt_2", text: "Salah", score: 0 },
+      ],
+      shuffle_options: true,
+      explanation: "Pembahasan contoh",
+      created_at: "2026-01-01T00:00:00.000Z",
+    };
+
+    saveExamSessionPayload("skd-penuh-01", { version: 1, package: pkg, questions: [q1] }, storage);
+    const loadedPayload = loadExamSessionPayload("skd-penuh-01", storage);
+    expect(loadedPayload?.questions.length).toBe(1);
+    expect(loadedPayload?.questions[0]?.id).toBe(q1.id);
+
+    clearExamSession("skd-penuh-01", storage);
+    expect(loadExamSessionPayload("skd-penuh-01", storage)).toBeNull();
+
+    saveLastExamResult(
+      {
+        version: 1,
+        clientAttemptId: "33333333-3333-4333-8333-333333333333",
+        packageId: pkg.id,
+        packageSlug: pkg.slug,
+        answers: { [q1.id]: "opt_1" },
+        questionOrder: [q1.id],
+        optionOrders: { [q1.id]: ["opt_2", "opt_1"] },
+        durationSeconds: 180,
+        completedAt: "2026-01-01T00:10:00.000Z",
+        savedToServer: false,
+        package: pkg,
+        questions: [q1],
+      },
+      storage,
+    );
+
+    const loadedResult = loadLastExamResult("skd-penuh-01", storage);
+    expect(loadedResult?.answers[q1.id]).toBe("opt_1");
+    expect(loadedResult?.questions?.[0]?.id).toBe(q1.id);
   });
 });
